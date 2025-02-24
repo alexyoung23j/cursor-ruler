@@ -1,6 +1,6 @@
 # Cursor Ruler
 
-Self host a Github App that uses your team's PR comments and feedback to generate and manage Cursor rules files. 3 Minutes from `git clone` to production— give it a try.
+Self host a Github App that uses your team's PR comments and feedback to generate and manage Cursor rules files. 3 Minutes from `git clone` to production— give it a try!
 
 ## What Are Cursor Rules?
 
@@ -27,9 +27,12 @@ Cursor Ruler streamlines the process of creating and managing Cursor rules throu
 5. **Finalization**: When ready, a team member can comment with the command `/apply-cursor-rules` to trigger the bot to commit all accepted changes to the PR. After this commit, the bot stops analyzing further comments on that PR.
 
 6. **Management Interface**: A web-based frontend allows you to:
+
    - View recent suggestions and their statuses
    - Disable the bot globally or for specific repositories
    - Enable "dry-run" mode to preview bot actions without making actual comments or commits
+
+   The frontend uses a simple file-based state management system that is not persistent and is only meant to display recent data for ease of use. It provides a lightweight way to monitor and control the bot's activities without requiring a complex database setup.
 
 This workflow helps teams collaboratively develop and maintain Cursor rules while keeping the process integrated with your normal code review workflow. By aggregating collective best practices and repository-specific instructions from PR discussions, Cursor Ruler helps build a comprehensive set of rules that improve AI assistance throughout your development process.
 
