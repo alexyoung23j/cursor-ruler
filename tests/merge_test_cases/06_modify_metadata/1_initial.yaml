@@ -1,0 +1,33 @@
+pr_comment: |
+  We need to establish consistent code style guidelines for our JavaScript codebase.
+  I've been seeing inconsistent naming conventions and function organization.
+  Let's create a standard that everyone can follow.
+
+code_context: |
+  File: src/utils/string-helpers.js
+  Line: 15
+
+  Diff hunk:
+  ```diff
+  - function processstr(s) {
+  -   return s.trim().toLowerCase()
+  - }
+  + function processString(inputString) {
+  +   // Remove whitespace and convert to lowercase for consistency
+  +   return inputString.trim().toLowerCase();
+  + }
+  ```
+
+expected_generation:
+  should_generate: true
+  reason: "This establishes core code style guidelines"
+  operation: update
+  file_path: .cursor/rules/code-style.mdc
+  changes:
+    - type: "addition"
+      content: |
+        # Code Style Guidelines
+        - Use meaningful variable and function names
+        - Add comments for complex logic
+        - Keep functions focused and small
+      existing_content_context: "- Use semicolons at the end of statements"

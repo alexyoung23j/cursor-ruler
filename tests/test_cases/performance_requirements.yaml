@@ -1,0 +1,172 @@
+name: performance_requirements
+description: |
+  Tests handling of performance-related patterns that need to be
+  enforced across the codebase. Should create rules that ensure
+  consistent performance optimizations.
+
+pr_comment: |
+  All list components must implement virtualization when displaying
+  more than 100 items. Use react-window for consistency and to prevent
+  performance issues with large lists.
+
+code_context: |
+  File: src/components/UserList.tsx
+  Line: 12
+
+  Diff hunk:
+  ```diff
+  - import { useState, useEffect } from 'react';
+  + import { useState, useEffect } from 'react';
+  + import { FixedSizeList } from 'react-window';
+  + import AutoSizer from 'react-virtualized-auto-sizer';
+
+    export function UserList({ users }) {
+  -   return (
+  -     <div className="user-list">
+  -       {users.map(user => (
+  -         <UserCard key={user.id} user={user} />
+  -       ))}
+  -     </div>
+  +   const Row = ({ index, style }) => (
+  +     <div style={style}>
+  +       <UserCard user={users[index]} />
+  +     </div>
+  +   );
+  +
+  +   return (
+  +     <div className="user-list" style={{ height: '500px' }}>
+  +       <AutoSizer>
+  +         {({ height, width }) => (
+  +           <FixedSizeList
+  +             height={height}
+  +             width={width}
+  +             itemCount={users.length}
+  +             itemSize={100}
+  +           >
+  +             {Row}
+  +           </FixedSizeList>
+  +         )}
+  +       </AutoSizer>
+  +     </div>
+    );
+  }
+  ```
+
+  Broader file context:
+  ```tsx
+  import { useState, useEffect } from 'react';
+  import { FixedSizeList } from 'react-window';
+  import AutoSizer from 'react-virtualized-auto-sizer';
+  import { UserCard } from './UserCard';
+  import type { User } from '../types';
+
+  interface Props {
+    users: User[];
+  }
+
+  export function UserList({ users }: Props) {
+    const Row = ({ index, style }) => (
+      <div style={style}>
+        <UserCard user={users[index]} />
+      </div>
+    );
+
+    return (
+      <div className="user-list" style={{ height: '500px' }}>
+        <AutoSizer>
+          {({ height, width }) => (
+            <FixedSizeList
+              height={height}
+              width={width}
+              itemCount={users.length}
+              itemSize={100}
+            >
+              {Row}
+            </FixedSizeList>
+          )}
+        </AutoSizer>
+      </div>
+    );
+  }
+  ```
+
+existing_rules:
+  performance-guidelines.mdc: |
+    ---
+    description: Basic performance guidelines
+    globs: "src/**/*.tsx, src/**/*.ts"
+    ---
+    # Performance Guidelines
+
+    ## General
+    - Use React.memo for expensive renders
+    - Implement proper loading states
+    - Optimize images with next/image
+
+    ## Build Optimization
+    - Enable tree shaking
+    - Use dynamic imports for routes
+    - Implement code splitting
+    - Minimize bundle size
+    - Configure proper chunking
+
+    ## Database Performance
+    - Use proper indexes
+    - Optimize queries
+    - Implement query caching
+    - Use connection pooling
+    - Monitor query performance
+
+    ## Caching Strategy
+    - Implement Redis for session store
+    - Use CDN for static assets
+    - Browser caching headers
+    - Service worker caching
+    - API response caching
+
+    ## Asset Optimization
+    - Compress images
+    - Lazy load below fold
+    - Use WebP format
+    - Optimize fonts loading
+    - Minimize CSS/JS
+
+    ## Network Optimization
+    - Enable HTTP/2
+    - Use proper compression
+    - Implement preloading
+    - DNS prefetching
+    - Load balancing strategy
+
+    ## Monitoring
+    - Track Core Web Vitals
+    - Monitor server metrics
+    - Set up error tracking
+    - Performance budgets
+    - Regular audits
+
+  build-optimization.mdc: |
+    ---
+    description: Build process requirements
+    globs: "**/*.ts, **/*.tsx"
+    ---
+    # Build Process
+    - Use production builds
+    - Optimize dependencies
+    - Enable minification
+    - Configure source maps
+
+expected_analysis:
+  should_create_rule: true
+  reason: This establishes specific performance requirements for list components that should be consistently applied.
+
+expected_generation:
+  should_generate: true
+  reason: These performance patterns need to be documented to ensure consistent handling of large lists.
+  operation: update
+  file_path: performance-guidelines.mdc
+  changes:
+    - type: addition
+      content: "\n\n## List Virtualization\n- Use react-window for lists with >100 items\n- Implement FixedSizeList for uniform items\n- Use VariableSizeList for varying heights\n- Wrap with AutoSizer for responsive lists\n\n## Implementation\n```tsx\n<FixedSizeList\n  height={height}\n  width={width}\n  itemCount={items.length}\n  itemSize={100}\n>\n  {Row}\n</FixedSizeList>\n```\n\n## Additional Optimizations\n- Use windowing for large tables\n- Implement infinite scroll for API data\n- Cache list items with useMemo"
+      existing_content_context: "- Regular audits"
+      is_new_file: false

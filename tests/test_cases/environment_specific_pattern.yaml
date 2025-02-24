@@ -1,0 +1,134 @@
+name: environment_specific_pattern
+description: |
+  Tests handling of patterns that only apply in certain environments
+  (development, testing, production). Should create a rule that clearly
+  specifies environment-specific behaviors.
+
+pr_comment: |
+  In development, all API calls should use the mock service worker (MSW).
+  Production should always use real API endpoints. This will help us develop
+  without needing the backend running locally.
+
+code_context: |
+  File: src/api/client.ts
+  Line: 8
+
+  Diff hunk:
+  ```diff
+  + import { setupWorker } from 'msw';
+  + import { handlers } from './mocks/handlers';
+  +
+    export function setupApi() {
+  +   if (process.env.NODE_ENV === 'development') {
+  +     const worker = setupWorker(...handlers);
+  +     worker.start();
+  +   }
+  + 
+      return axios.create({
+        baseURL: process.env.API_URL,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    }
+  ```
+
+  Related mock file:
+  ```typescript
+  // src/api/mocks/handlers.ts
+  import { rest } from 'msw';
+
+  export const handlers = [
+    rest.get('/api/users', (req, res, ctx) => {
+      return res(
+        ctx.status(200),
+        ctx.json([
+          { id: 1, name: 'Test User' },
+          { id: 2, name: 'Another User' }
+        ])
+      );
+    }),
+    // ... more handlers
+  ];
+  ```
+
+existing_rules:
+  api-development.mdc: |
+    ---
+    description: API development guidelines
+    globs: "src/api/**/*.ts"
+    ---
+    # API Development
+
+    ## Database Interactions
+    - Use repository pattern for data access
+    - Implement unit of work for transactions
+    - Cache expensive queries
+    - Use database migrations for schema changes
+    - Follow naming conventions for tables and columns
+
+    ## Authentication
+    - Use JWT for stateless auth
+    - Implement refresh token rotation
+    - Store tokens in httpOnly cookies
+    - Add rate limiting for auth endpoints
+    - Implement OAuth2 for third-party auth
+
+    ## Endpoints
+    - Use axios for HTTP requests
+    - Include proper error handling
+    - Add retry logic for failed requests
+
+    ## WebSocket Guidelines
+    - Use socket.io for real-time features
+    - Implement heartbeat mechanism
+    - Handle reconnection gracefully
+    - Document event schemas
+    - Add proper error handling for sockets
+
+    ## GraphQL Standards
+    - Use code-first approach
+    - Implement DataLoader for N+1 queries
+    - Add proper error handling
+    - Use fragments for reusable fields
+    - Document all types and resolvers
+
+    ## Monitoring
+    - Add OpenTelemetry instrumentation
+    - Track request latency
+    - Monitor error rates
+    - Set up health check endpoints
+    - Implement custom metrics
+
+    ## Security
+    - Validate all input
+    - Sanitize SQL queries
+    - Set proper CORS headers
+    - Implement CSP headers
+    - Regular security audits
+
+  security-standards.mdc: |
+    ---
+    description: Security requirements
+    globs: "**/*.ts"
+    ---
+    # Security Standards
+    - Use HTTPS everywhere
+    - Implement proper CORS
+    - Add rate limiting
+    - Validate all input
+
+expected_analysis:
+  should_create_rule: true
+  reason: This establishes important environment-specific patterns for API development that should be consistently followed.
+
+expected_generation:
+  should_generate: true
+  reason: These environment-specific patterns need to be documented to ensure consistent development practices.
+  operation: update
+  file_path: api-development.mdc
+  changes:
+    - type: addition
+      content: "\n\n## Environment-Specific Behavior\nDevelopment:\n- Use Mock Service Worker (MSW) for API mocking\n- Define handlers in src/api/mocks/handlers.ts\n- Mock all endpoints used in development\n\nTesting:\n- Use MSW for consistent test behavior\n- Define test-specific handlers when needed\n- Don't rely on external services in tests\n\nProduction:\n- Always use real API endpoints\n- Never include MSW in production builds\n- Use proper API URLs from environment"
+      existing_content_context: "## Endpoints\n- Use axios for HTTP requests\n- Include proper error handling\n- Add retry logic for failed requests"
+      is_new_file: false

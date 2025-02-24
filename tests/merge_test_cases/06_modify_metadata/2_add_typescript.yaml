@@ -1,0 +1,38 @@
+pr_comment: |
+  We're starting to use TypeScript in some of our modules.
+  We should update our code style guide to include TypeScript-specific guidelines
+  and make sure our rules apply to .ts files as well.
+
+code_context: |
+  File: src/components/UserProfile.ts
+  Line: 10
+
+  Diff hunk:
+  ```diff
+  - function updateUser(data) {
+  -   api.updateProfile(data);
+  - }
+  + function updateUser(data: UserProfileData): Promise<void> {
+  +   return api.updateProfile(data);
+  + }
+  +
+  + interface UserProfileData {
+  +   name: string;
+  +   email: string;
+  +   preferences: UserPreferences;
+  + }
+  ```
+
+expected_generation:
+  should_generate: true
+  reason: "Adding TypeScript support and type-specific guidelines"
+  operation: "update"
+  file_path: ".cursor/rules/code-style.mdc"
+  changes:
+    - type: "addition"
+      content: |
+        - For TypeScript:
+          - Use explicit type annotations for function parameters
+          - Prefer interfaces over type aliases
+      existing_content_context: "- Use semicolons at the end of statements"
+      file_globs: ["*.js", "*.ts"]

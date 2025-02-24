@@ -1,0 +1,122 @@
+name: error_handling_patterns
+description: |
+  Tests handling of a PR comment about standardizing error handling across the codebase.
+
+pr_comment: |
+  @alex this is causing issues in prod because we're not handling the API errors consistently 🤦‍♂️
+
+  can we standardize this? we should probably:
+  1. always use the ApiError class (it has the right fields for the frontend)
+  2. catch specific exceptions instead of catching everything
+  3. log the full error context so we can actually debug these
+
+code_context: |
+  File: src/api/orders.py
+  Line: 45
+
+  Diff hunk:
+  ```diff
+    async def create_order(data: OrderCreate) -> Order:
+  -     try:
+  -         async with db.transaction():
+  -             order = await Order.create(**data.dict())
+  -             return order
+  -     except Exception as e:
+  -         logger.error("Failed to create order")
+  -         raise HTTPException(500, "Internal server error")
+  +     try:
+  +         async with db.transaction():
+  +             order = await Order.create(**data.dict())
+  +             return order
+  +     except IntegrityError as e:
+  +         logger.error("Order creation failed - duplicate reference", 
+  +             extra={"order_ref": data.reference, "error": str(e)})
+  +         raise ApiError(
+  +             status_code=400,
+  +             code="DUPLICATE_ORDER",
+  +             message="An order with this reference already exists"
+  +         )
+  +     except DatabaseError as e:
+  +         logger.error("Order creation failed - database error",
+  +             extra={"data": data.dict(), "error": str(e)})
+  +         raise ApiError(
+  +             status_code=500,
+  +             code="DATABASE_ERROR",
+  +             message="Failed to create order"
+  +         )
+  ```
+
+  Broader file context:
+  ```python
+  from typing import List
+  from loguru import logger
+  from fastapi import HTTPException
+  from sqlalchemy.exc import IntegrityError, DatabaseError
+  from .models import Order
+  from .schemas import OrderCreate
+  from .errors import ApiError
+
+  async def get_orders() -> List[Order]:
+      try:
+          return await Order.query.gino.all()
+      except DatabaseError as e:
+          logger.error("Failed to fetch orders", extra={"error": str(e)})
+          raise ApiError(
+              status_code=500,
+              code="DATABASE_ERROR",
+              message="Failed to fetch orders"
+          )
+
+  async def create_order(data: OrderCreate) -> Order:
+      try:
+          async with db.transaction():
+              order = await Order.create(**data.dict())
+              return order
+      except IntegrityError as e:
+          logger.error("Order creation failed - duplicate reference", 
+              extra={"order_ref": data.reference, "error": str(e)})
+          raise ApiError(
+              status_code=400,
+              code="DUPLICATE_ORDER",
+              message="An order with this reference already exists"
+          )
+      except DatabaseError as e:
+          logger.error("Order creation failed - database error",
+              extra={"data": data.dict(), "error": str(e)})
+          raise ApiError(
+              status_code=500,
+              code="DATABASE_ERROR",
+              message="Failed to create order"
+          )
+  ```
+
+existing_rules:
+  error-handling.mdc: |
+    ---
+    description: Basic error handling guidelines
+    globs: "**/*.py"
+    ---
+    # Error Handling
+
+    When an error occurs, we need enough context to understand and fix it.
+    Log errors with relevant data, but be careful not to log sensitive info.
+
+    ## Basic Rules
+    - Don't swallow exceptions
+    - Log with appropriate level (error vs warning)
+    - Include stack traces for unexpected errors
+
+expected_analysis:
+  should_create_rule: true
+  reason: The comment establishes specific patterns for API error handling that should be consistently applied.
+
+expected_generation:
+  should_generate: true
+  reason: These specific error handling patterns should be documented alongside the basic guidelines.
+  operation: update
+  file_path: error-handling.mdc
+  changes:
+    - type: addition
+      content: "\n\n## API Error Handling\n\nAlways use the `ApiError` class for HTTP endpoints - it has the right structure\nfor frontend error handling and keeps things consistent.\n\n```python\n# ❌ Don't do this:\nexcept Exception as e:\n    logger.error(\"Failed\")\n    raise HTTPException(500, \"Internal server error\")\n\n# ✅ Do this instead:\nexcept DatabaseError as e:\n    logger.error(\"Order creation failed\",\n        extra={\"order_id\": order_id, \"error\": str(e)})\n    raise ApiError(\n        status_code=500,\n        code=\"DATABASE_ERROR\",\n        message=\"Failed to create order\"\n    )\n```\n\n### Error Codes\nUse these standard error codes:\n- `DATABASE_ERROR` - For any database-related errors\n- `VALIDATION_ERROR` - For invalid input data\n- `NOT_FOUND` - When a resource doesn't exist\n- `DUPLICATE_ERROR` - For unique constraint violations\n- `UNAUTHORIZED` - For authentication errors\n- `FORBIDDEN` - For permission errors\n\n### Logging Best Practices\n- Catch specific exceptions (DatabaseError, ValidationError, etc)\n- Log with context data that will help debugging\n- Don't log sensitive data (passwords, tokens, etc)\n- Use structured logging with the `extra` parameter"
+      existing_content_context: "When an error occurs, we need enough context to understand and fix it.\nLog errors with relevant data, but be careful not to log sensitive info.\n\n## Basic Rules\n- Don't swallow exceptions\n- Log with appropriate level (error vs warning)\n- Include stack traces for unexpected errors"
+      is_new_file: false

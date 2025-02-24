@@ -1,0 +1,83 @@
+name: test_organization_patterns
+description: |
+  Tests handling of a PR comment about test file organization and naming conventions.
+
+pr_comment: |
+  @mike your tests are good but can you reorganize them a bit? 🙏
+
+  we've been trying to keep the test files matching the source structure (so auth tests go in tests/unit/auth/)
+  and using consistent naming (TestAuthService instead of AuthServiceTests)
+
+  makes it way easier to find tests when they mirror the source files
+
+code_context: |
+  File: tests/services/test_auth.py
+  Line: 1
+
+  Diff hunk:
+  ```diff
+  - class AuthServiceTests:
+  + class TestAuthService:
+      def test_login(self):
+  -        # test basic login
+  +        # test successful login
+          pass
+
+  -    def test_login_fail(self):
+  +    def test_login_invalid_credentials(self):
+          pass
+  ```
+
+  Directory structure:
+  ```
+  tests/
+  ├── services/
+  │   └── test_auth.py
+  ├── test_config.py
+  └── conftest.py
+  ```
+
+existing_rules:
+  error-handling.mdc: |
+    ---
+    description: Error handling standards and best practices
+    globs: "**/*.py, **/*.ts"
+    ---
+    # Error Handling
+
+    ## Guidelines
+    - Use custom error classes for domain errors
+    - Include error codes in all errors
+    - Log errors with stack traces
+    - Handle errors at appropriate levels
+    - Provide user-friendly error messages
+
+  test-fixtures.mdc: |
+    ---
+    description: Test fixture organization and usage
+    globs: "tests/**/*.py"
+    ---
+    # Test Fixtures
+
+    ## Usage
+    - Put shared fixtures in conftest.py
+    - Scope fixtures appropriately
+    - Use factory fixtures for complex objects
+    - Clean up resources in yield fixtures
+
+expected_analysis:
+  should_create_rule: true
+  reason: The comment establishes consistent patterns for test organization that should be documented.
+
+expected_generation:
+  should_generate: true
+  reason: Test organization patterns complement existing testing guidelines and deserve their own section.
+  operation: create
+  file_path: test-organization.mdc
+  changes:
+    - type: addition
+      content: "# Test Organization\n\n## Directory Structure\n- Unit tests in tests/unit/<module>/\n- Integration tests in tests/integration/<service>/\n- E2E tests in tests/e2e/\n- Performance tests in tests/performance/\n- Test files must mirror source structure\n- One test file per source file\n\n## Naming\n- Test files: test_<source_file>.py\n- Test classes: Test<ClassName>\n- Test methods: test_<method>_<scenario>\n- Use descriptive scenario names\n\n## Organization\n- Group related tests in classes\n- Split large test files\n- Use appropriate markers\n- Keep setup/teardown simple"
+      existing_content_context: null
+      is_new_file: true
+      file_globs: ["tests/**/*.py"]
+      file_description: "Test organization requirements"

@@ -1,0 +1,66 @@
+name: company_specific_imports
+description: |
+  Tests handling of a PR comment about company-specific import patterns.
+  This represents a real-world scenario where a company has specific
+  rules about importing from their internal packages.
+
+pr_comment: |
+  We should import from @acme/core-components instead of @acme/components.
+  The /components package is being deprecated in favor of /core-components
+  which has better TypeScript support and follows our new design system.
+
+code_context: |
+  File: features/dashboard/widgets/MetricsCard.tsx
+  Line: 3
+
+  Diff hunk:
+  ```diff
+  - import { Card, CardHeader } from '@acme/components'
+  + import { Card, CardHeader } from '@acme/core-components'
+  ```
+
+  Broader file context:
+  ```typescript
+  import React from 'react'
+  import { useMetrics } from '../hooks'
+  import { Card, CardHeader } from '@acme/core-components'
+  import { MetricsChart } from './MetricsChart'
+
+  export const MetricsCard = ({ period }) => {
+    const metrics = useMetrics(period)
+    return (
+      <Card>
+        <CardHeader>Metrics for {period}</CardHeader>
+        <MetricsChart data={metrics} />
+      </Card>
+    )
+  }
+  ```
+
+existing_rules:
+  imports.mdc: |
+    ---
+    description: Import structure and organization
+    globs: "**/*.ts, **/*.tsx"
+    ---
+    # Import Guidelines
+
+    ## Import Structure
+    - Use absolute imports for internal packages
+    - Group imports by type (react, external, internal)
+    - No direct imports from other features
+
+expected_analysis:
+  should_create_rule: true
+  reason: This comment establishes a clear pattern about package usage that should be consistently applied across the codebase.
+
+expected_generation:
+  should_generate: true
+  reason: This is a company-specific pattern about package deprecation and migration that should be added to our import rules.
+  operation: update
+  file_path: imports.mdc
+  changes:
+    - type: addition
+      content: "- Use @acme/core-components instead of @acme/components for UI components"
+      existing_content_context: "- No direct imports from other features"
+      is_new_file: false

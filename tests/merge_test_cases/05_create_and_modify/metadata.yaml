@@ -1,0 +1,22 @@
+name: create_and_modify
+description: |
+  Tests creating a new file while also modifying an existing file.
+  1. First suggestion creates a new file with testing guidelines
+  2. Second suggestion modifies the documentation section in the existing python standards
+
+existing_rules:
+  python-standards.mdc: |
+    ---
+    description: Python coding standards
+    globs: "*.py"
+    ---
+    # Python Standards
+
+    ## Code Style
+    - Use 4 spaces for indentation
+    - Maximum line length is 88 characters
+    - Follow PEP 8 guidelines
+
+    ## Documentation
+    - All functions must have docstrings
+    - Use type hints for function parameters

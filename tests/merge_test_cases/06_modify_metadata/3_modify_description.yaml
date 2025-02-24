@@ -1,0 +1,40 @@
+pr_comment: |
+  After working with TypeScript for a while, I think we should update our TypeScript guidelines
+  to be more comprehensive. I've also noticed our current description doesn't properly reflect
+  that we're a dual JavaScript/TypeScript codebase.
+
+code_context: |
+  File: src/services/AuthService.ts
+  Line: 25
+
+  Diff hunk:
+  ```diff
+  - interface LoginResponse {
+  -   token: string;
+  -   user: any;
+  - }
+  + type LoginResult = {
+  +   token: string;
+  +   user: User;
+  + } | {
+  +   error: string;
+  +   code: number;
+  + };
+  +
+  + function login(credentials: Credentials): Promise<LoginResult> {
+  +   // Implementation with proper type inference and union types
+  +   const response = await api.login(credentials);
+  +   return response;
+  + }
+  ```
+
+expected_generation:
+  should_generate: true
+  reason: "Updating description to be more comprehensive and replacing TypeScript guidelines"
+  operation: "update"
+  file_path: ".cursor/rules/code-style.mdc"
+  changes:
+    - type: "replacement"
+      content: "- Avoid using semicolons"
+      text_to_replace: "- Use semicolons at the end of statements"
+      file_description: "Comprehensive code style and best practices for JavaScript and TypeScript development"

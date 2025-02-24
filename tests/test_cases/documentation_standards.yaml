@@ -1,0 +1,159 @@
+name: documentation_standards
+description: |
+  Tests handling of documentation requirements that should be
+  enforced across different types of code. Should create rules
+  that ensure consistent documentation practices.
+
+pr_comment: |
+  All public APIs need to include TypeDoc comments with @param and @returns
+  tags, plus at least one usage example. This will help with auto-generated
+  docs and make the codebase more maintainable.
+
+code_context: |
+  File: src/api/orders.ts
+  Line: 25
+
+  Diff hunk:
+  ```diff
+  - export async function createOrder(data: OrderData): Promise<Order> {
+  + /**
+  +  * Creates a new order in the system
+  +  * 
+  +  * @param data - The order data including items and customer info
+  +  * @returns A promise that resolves to the created Order
+  +  * 
+  +  * @example
+  +  * ```ts
+  +  * const order = await createOrder({
+  +  *   customerId: '123',
+  +  *   items: [{ productId: '456', quantity: 1 }]
+  +  * });
+  +  * ```
+  +  * 
+  +  * @throws {ValidationError} If the order data is invalid
+  +  * @throws {DatabaseError} If the order cannot be created
+  +  */
+  + export async function createOrder(data: OrderData): Promise<Order> {
+      const validation = validateOrderData(data);
+      if (!validation.isValid) {
+        throw new ValidationError(validation.errors);
+      }
+      
+      return await db.orders.create(data);
+    }
+  ```
+
+  Broader file context:
+  ```typescript
+  import { Order, OrderData } from '../types';
+  import { validateOrderData } from '../validation';
+  import { ValidationError, DatabaseError } from '../errors';
+  import { db } from '../db';
+
+  /**
+   * Creates a new order in the system
+   * 
+   * @param data - The order data including items and customer info
+   * @returns A promise that resolves to the created Order
+   * 
+   * @example
+   * ```ts
+   * const order = await createOrder({
+   *   customerId: '123',
+   *   items: [{ productId: '456', quantity: 1 }]
+   * });
+   * ```
+   * 
+   * @throws {ValidationError} If the order data is invalid
+   * @throws {DatabaseError} If the order cannot be created
+   */
+  export async function createOrder(data: OrderData): Promise<Order> {
+    const validation = validateOrderData(data);
+    if (!validation.isValid) {
+      throw new ValidationError(validation.errors);
+    }
+    
+    return await db.orders.create(data);
+  }
+  ```
+
+existing_rules:
+  code-documentation.mdc: |
+    ---
+    description: Basic documentation guidelines
+    globs: "**/*.ts, **/*.tsx, **/*.js, **/*.jsx"
+    ---
+    # Documentation Guidelines
+
+    ## Git Commit Messages
+    - Use conventional commits
+    - Include ticket numbers
+    - Keep messages concise
+    - Use proper tense
+    - Reference PRs when needed
+
+    ## Repository Documentation
+    - Maintain README.md
+    - Document setup steps
+    - Include architecture diagrams
+    - List dependencies
+    - Add contribution guide
+
+    ## Code Reviews
+    - Review all changes
+    - Use inline comments
+    - Reference standards
+    - Be constructive
+    - Follow checklist
+
+    ## Comments
+    - Use clear and concise comments
+    - Document complex logic
+    - Keep comments up to date
+
+    ## API Documentation
+    - Use OpenAPI/Swagger
+    - Document all endpoints
+    - Include response examples
+    - List error codes
+    - Version all APIs
+
+    ## Testing Documentation
+    - Document test cases
+    - Explain test setup
+    - Include test data
+    - Document mocks
+    - Explain test strategy
+
+    ## Deployment Documentation
+    - Document CI/CD
+    - Include rollback steps
+    - List environment vars
+    - Document scaling
+    - Monitoring setup
+
+  git-standards.mdc: |
+    ---
+    description: Git workflow standards
+    globs: "**/*"
+    ---
+    # Git Standards
+    - Use feature branches
+    - Squash commits
+    - Write clear messages
+    - Keep PRs small
+
+expected_analysis:
+  should_create_rule: true
+  reason: This establishes specific documentation requirements for public APIs that will improve code maintainability.
+
+expected_generation:
+  should_generate: true
+  reason: These documentation standards should be added to ensure consistent API documentation.
+  operation: update
+  file_path: code-documentation.mdc
+  changes:
+    - type: addition
+      content: "\n\n## TypeDoc Requirements\nAll public APIs must include:\n- Function description\n- @param tags with descriptions\n- @returns tag with type and description\n- At least one @example with code\n- @throws tags for possible errors\n\n## Example Format\n```typescript\n/**\n * Brief description of function\n * \n * @param paramName - Parameter description\n * @returns Description of return value\n * \n * @example\n * ```ts\n * // Usage example here\n * ```\n * \n * @throws {ErrorType} Error description\n */\n```\n\n## Additional Guidelines\n- Document all public exports\n- Include type information\n- Add links to related APIs\n- Document breaking changes"
+      existing_content_context: "## Comments\n- Use clear and concise comments\n- Document complex logic\n- Keep comments up to date"
+      is_new_file: false

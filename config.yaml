@@ -1,0 +1,49 @@
+# Cursor Rules Webhook Server Configuration
+
+# GitHub settings
+github:
+  # Repository settings
+  repo_settings:
+    cursor_rules_path: ".cursor/rules/" # Path to cursor rules directory
+    default_branch: "main" # Default branch for rule updates
+
+  # PR settings
+  pr_settings:
+    comment_template: |
+      **🤖 Cursor Rule Suggestion**
+
+      Based on the changes in this PR, I suggest adding/updating the following Cursor rule:
+
+      ```yaml
+      {rule}
+      ```
+
+      **Reason:** {reason}
+
+      React with 👍 to approve this suggestion, or ignore if you'd like to skip it.
+
+# Rule analysis settings
+rules:
+  # Minimum number of similar patterns to trigger a rule suggestion
+  pattern_threshold: 2
+
+  # File patterns to analyze
+  include_patterns:
+    - "*.py"
+    - "*.js"
+    - "*.ts"
+    - "*.jsx"
+    - "*.tsx"
+
+  # File patterns to ignore
+  exclude_patterns:
+    - "node_modules/**"
+    - "venv/**"
+    - "**/__pycache__/**"
+    - "*.test.*"
+    - "*.spec.*"
+
+# Logging settings
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

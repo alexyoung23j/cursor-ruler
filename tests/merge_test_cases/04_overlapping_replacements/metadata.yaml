@@ -1,0 +1,24 @@
+name: overlapping_replacements
+description: |
+  Tests how overlapping replacements are handled.
+  1. First suggestion replaces the error handling section with one set of guidelines
+  2. Second suggestion replaces the same section with different guidelines
+  Tests how conflicting replacements of the same section are merged.
+
+existing_rules:
+  python-standards.mdc: |
+    ---
+    description: Python coding standards
+    globs: "*.py"
+    ---
+    # Python Standards
+
+    ## Code Style
+    - Use 4 spaces for indentation
+    - Maximum line length is 88 characters
+    - Follow PEP 8 guidelines
+
+    ## Error Handling
+    - Use try/except blocks appropriately
+    - Handle common exceptions
+    - Log errors properly

@@ -1,0 +1,69 @@
+name: python_type_hints
+description: |
+  Tests handling of a PR comment about Python type hint requirements.
+
+pr_comment: |
+  @chris the lack of type hints is making it really hard to refactor this stuff safely 😕
+
+  we should add proper typing here - especially for the callback params, mypy is complaining.
+  while you're at it can you avoid using Any? we've been trying to be more specific with types
+  to catch bugs earlier
+
+code_context: |
+  File: services/data_processor.py
+  Line: 15
+
+  Diff hunk:
+  ```diff
+  - def process_batch(data, callback):
+  + def process_batch(data: List[Dict[str, Any]], callback: Callable[[Dict[str, Any]], None]) -> None:
+      for item in data:
+          callback(item)
+  ```
+
+  Broader file context:
+  ```python
+  from typing import List, Dict, Any, Callable
+
+  class DataProcessor:
+      def __init__(self, config: Dict[str, str]):
+          self.config = config
+      
+      def process_batch(data: List[Dict[str, Any]], callback: Callable[[Dict[str, Any]], None]) -> None:
+          for item in data:
+              callback(item)
+      
+      def get_stats(self):  # Missing type hints
+          return {
+              "processed": self.processed_count,
+              "errors": self.error_count
+          }
+  ```
+
+existing_rules:
+  python-standards.mdc: |
+    ---
+    description: Basic Python coding standards
+    globs: "**/*.py"
+    ---
+    # Python Code Standards
+
+    ## Style
+    - Use f-strings instead of .format() or %
+    - Max line length: 100 chars
+    - Use pathlib instead of os.path
+
+expected_analysis:
+  should_create_rule: true
+  reason: The comment highlights the need for consistent type hint usage to improve code safety and maintainability.
+
+expected_generation:
+  should_generate: true
+  reason: Type hint requirements should be added to the existing Python standards file for better organization and discoverability.
+  operation: update
+  file_path: python-standards.mdc
+  changes:
+    - type: addition
+      content: "\n\n## Type Hints\n- All function parameters must have type hints\n- All functions must specify return types\n- Avoid using Any unless absolutely necessary\n- For callbacks, use Callable with proper type parameters\n- For collections, use List[Type], Dict[KeyType, ValueType]\n- For optional parameters, use Optional[Type] not Type | None\n- For async functions, use Awaitable[Type] return hint\n\n### Type Aliases\n- Create aliases for complex types\n- Put shared type aliases in types.py\n- Example: JsonDict = Dict[str, Union[str, int, float, bool, None]]\n\n### Tools and Enforcement\n- Use mypy for type checking\n- Run type checks in CI\n- Configure IDE to show type hints"
+      existing_content_context: "## Style\n- Use f-strings instead of .format() or %\n- Max line length: 100 chars\n- Use pathlib instead of os.path"
+      is_new_file: false

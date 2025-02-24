@@ -1,0 +1,39 @@
+# Dependencies
+venv/
+node_modules/
+__pycache__/
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# Large files and binaries
+*.tar.gz
+*.tgz
+*.zip
+*.pyc
+*.pyo
+*.pyd
+*.so
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Environment files
+.env
+.env.*
+
+# IDE
+.idea/
+.vscode/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# System files
+.DS_Store
+Thumbs.db 

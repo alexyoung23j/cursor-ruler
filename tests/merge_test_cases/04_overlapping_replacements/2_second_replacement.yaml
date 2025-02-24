@@ -1,0 +1,75 @@
+pr_comment: |
+  We should update our error handling guidelines to focus on recovery and logging.
+  I've updated our error handling to:
+  - Better recovery strategies
+  - Structured error logging
+  - Proper cleanup
+
+code_context: |
+  File: src/services/user_service.py
+  Line: 42
+
+  Diff hunk:
+  ```diff
+   def update_user_profile(user_id: int, data: Dict) -> User:
+  +    logger.info(f"Updating profile for user {user_id}")
+       try:
+           user = get_user(user_id)
+           old_data = user.profile_data
+           
+           try:
+               user.update_profile(data)
+               return user
+  +        except ValidationError:
+  +            # Rollback to old profile data
+  +            user.update_profile(old_data)
+  +            logger.warning(
+  +                "Profile update failed - rolled back",
+  +                extra={
+  +                    "user_id": user_id,
+  +                    "attempted_update": data
+  +                }
+  +            )
+  +            raise
+       except Exception as e:
+  +        logger.error(
+  +            "Critical error updating profile",
+  +            extra={
+  +                "user_id": user_id,
+  +                "error": str(e),
+  +                "error_type": type(e).__name__
+  +            }
+  +        )
+           raise
+  ```
+
+expected_generation:
+  should_generate: true
+  reason: Error handling guidelines need to focus more on recovery strategies and logging.
+  operation: update
+  file_path: python-standards.mdc
+  changes:
+    - type: replacement
+      text_to_replace: |
+        ## Error Handling
+        - Use try/except blocks appropriately
+        - Handle common exceptions
+        - Log errors properly
+      content: |
+        ### Recovery Strategies
+        - Implement rollback mechanisms for failed operations
+        - Use context managers for cleanup
+        - Have fallback options for critical operations
+        - Cache previous state when appropriate
+
+        ### Error Logging
+        - Use structured logging for all errors
+        - Include operation context in log messages
+        - Log at appropriate levels (warning vs error)
+        - Include stack traces for unexpected errors
+
+        ### Cleanup and Resources
+        - Always clean up resources in finally blocks
+        - Use context managers (with statements)
+        - Implement proper database transaction handling
+        - Close network connections reliably

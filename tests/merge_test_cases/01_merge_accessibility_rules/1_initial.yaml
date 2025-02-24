@@ -1,0 +1,39 @@
+pr_comment: |
+  We need to ensure all our components meet WCAG 2.1 AA standards.
+  Here's what I've updated in the button component:
+  1. Added proper aria-labels
+  2. Made sure it works with screen readers
+
+code_context: |
+  File: src/components/Button.tsx
+  Line: 12
+
+  Diff hunk:
+  ```diff
+    export function Button({ children, variant = 'primary' }) {
+      return (
+        <button
+  +       aria-label={typeof children === 'string' ? children : undefined}
+  +       role="button"
+        >
+          {children}
+        </button>
+      );
+    }
+  ```
+
+expected_generation:
+  should_generate: true
+  reason: Basic accessibility standards need to be documented.
+  operation: create
+  file_path: .cursor/rules/accessibility-standards.mdc
+  changes:
+    - type: addition
+      content: |
+        # Accessibility Standards
+        All components must meet WCAG 2.1 AA standards:
+        - Add proper aria-labels to all interactive elements
+        - Ensure components work with screen readers
+      is_new_file: true
+      file_globs: ["src/**/*.tsx", "src/**/*.jsx"]
+      file_description: "Basic accessibility requirements for UI components"

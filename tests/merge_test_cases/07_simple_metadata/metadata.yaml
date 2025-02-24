@@ -1,0 +1,23 @@
+name: modify_metadata
+description: |
+  Tests modifying rule metadata (descriptions and globs) along with content.
+  1. First suggestion adds basic JavaScript guidelines
+  2. Second suggestion adds a new glob pattern for TypeScript files
+  3. Third suggestion modifies the description and replaces some content
+
+existing_rules:
+  python-standards.mdc: |
+    ---
+    description: Python Standards
+    globs: "*.py"
+    ---
+    # Python Standards
+    - use good practices
+  .cursor/rules/code-style.mdc: |
+    ---
+    description: Core code style guidelines for JavaScript projects
+    globs: "*.js"
+    ---
+    # Code Style Guidelines
+    - Follow consistent indentation
+    - Use semicolons at the end of statements

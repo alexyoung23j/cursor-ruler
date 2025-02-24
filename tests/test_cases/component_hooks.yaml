@@ -1,0 +1,100 @@
+name: component_hooks_pattern
+description: |
+  Tests handling of a PR comment about React hook patterns and component organization.
+  Should update the existing frontend guidelines with new patterns.
+
+pr_comment: |
+  hey @sarah can we move these data fetching hooks into a separate file? we've been trying to keep
+  components clean by putting all the data/API logic in hook files. makes it way easier to test too
+
+  also noticed we're still using useEffect for data fetching - we should probably switch to react-query
+  for all the API calls, it handles caching and loading states much better
+
+code_context: |
+  File: src/features/dashboard/components/UserStats.tsx
+  Line: 12
+
+  Diff hunk:
+  ```diff
+  - export function UserStats({ userId }: Props) {
+  -   const [data, setData] = useState<StatsData | null>(null);
+  -   const [loading, setLoading] = useState(true);
+  - 
+  -   useEffect(() => {
+  -     async function fetchStats() {
+  -       const response = await fetch(`/api/users/${userId}/stats`);
+  -       const json = await response.json();
+  -       setData(json);
+  -       setLoading(false);
+  -     }
+  -     fetchStats();
+  -   }, [userId]);
+  + export function UserStats({ userId }: Props) {
+  +   const { data, isLoading } = useUserStats(userId);
+  ```
+
+  Broader file context:
+  ```tsx
+  import React from 'react';
+  import { StatsCard } from '@/components/StatsCard';
+  import { useUserStats } from '../hooks/useUserStats';
+  import type { StatsData } from '../types';
+
+  interface Props {
+    userId: string;
+  }
+
+  export function UserStats({ userId }: Props) {
+    const { data, isLoading } = useUserStats(userId);
+
+    if (isLoading) return <div>Loading stats...</div>;
+    if (!data) return null;
+
+    return (
+      <div className="grid gap-4 md:grid-cols-2">
+        <StatsCard 
+          title="Total Orders"
+          value={data.totalOrders} 
+        />
+        <StatsCard
+          title="Revenue" 
+          value={data.revenue}
+          format="currency"
+        />
+      </div>
+    );
+  }
+  ```
+
+existing_rules:
+  frontend-guidelines.mdc: |
+    ---
+    description: Guidelines for frontend development
+    globs: "src/**/*.tsx, src/**/*.ts"
+    ---
+    # Frontend Development Guidelines
+
+    ## Component Structure
+    - All components must be functional components using hooks
+    - Class components are deprecated and should be migrated
+    - Use custom hooks to handle complex state and side effects
+
+    ## State Management
+    - Use local state for UI-only state
+    - Use context for theme/auth/global UI state
+    - Use Redux for complex server state
+
+expected_analysis:
+  should_create_rule: true
+  reason: The comment suggests established patterns for data fetching and component organization that should be documented.
+
+expected_generation:
+  should_generate: true
+  reason: These patterns about hooks and data fetching complement the existing frontend guidelines.
+  operation: update
+  file_path: frontend-guidelines.mdc
+  changes:
+    - type: addition
+      content: "\n  ## Data Fetching\n  - Keep data fetching logic in separate custom hook files\n  - Use react-query for API calls instead of useEffect\n  - Components should only consume data through hooks\n  - Data fetching hooks should be co-located with their related components"
+      existing_content_context: "  - Use Redux for complex server state"
+      is_new_file: false

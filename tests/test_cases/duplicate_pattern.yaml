@@ -1,0 +1,64 @@
+name: duplicate_pattern
+description: |
+  Tests handling of a PR comment that suggests a valid pattern,
+  but one that's already covered by existing rules. Should pass
+  first check but fail second check.
+
+pr_comment: |
+  Let's make sure we're using the logger.error method for all errors.
+
+code_context: |
+  File: services/payment.ts
+  Line: 78
+
+  Diff hunk:
+  ```diff
+    try {
+      await processPayment(order)
+    } catch (error) {
+  -   console.error('Payment failed:', error)
+  +   logger.error('Payment failed:', { error, orderId: order.id })
+      throw error
+    }
+  ```
+
+  Broader file context:
+  ```typescript
+  import { logger } from '../utils/logger'
+  import { Order } from '../types'
+
+  export class PaymentService {
+    async processOrder(order: Order) {
+      try {
+        await processPayment(order)
+      } catch (error) {
+        logger.error('Payment failed:', { error, orderId: order.id })
+        throw error
+      }
+    }
+  }
+  ```
+
+existing_rules:
+  error-handling.mdc: |
+    ---
+    description: Standardized error handling and logging patterns
+    globs: "**/*.ts, **/*.js"
+    ---
+    # Error Handling Guidelines
+
+    ## Logging Standards
+    - Always use logger.error for error logging
+    - Include relevant context (IDs, error details)
+    - Re-throw errors after logging in service layer
+
+expected_analysis:
+  should_create_rule: true
+  reason: This comment suggests a consistent pattern for error handling that could be beneficial across the codebase.
+
+expected_generation:
+  should_generate: false
+  reason: This pattern is already well-covered by the existing error-handling.mdc rule, which specifies using logger.error and including context in error logs.
+  operation: null
+  file_path: null
+  changes: []

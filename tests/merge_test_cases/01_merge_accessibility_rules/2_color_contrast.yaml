@@ -1,0 +1,41 @@
+pr_comment: |
+  We need to add color contrast requirements to our accessibility standards.
+  I've updated the button to ensure proper contrast:
+  - Light text on dark backgrounds: 4.5:1 ratio
+  - Dark text on light backgrounds: 7:1 ratio
+
+code_context: |
+  File: src/components/Button.tsx
+  Line: 25
+
+  Diff hunk:
+  ```diff
+    const styles = {
+      primary: css`
+        background: #1a365d;
+  +     /* Ensures 4.5:1 contrast ratio */
+  +     color: #ffffff;
+      `,
+      secondary: css`
+        background: #f7fafc;
+  +     /* Ensures 7:1 contrast ratio */
+  +     color: #1a365d;
+      `
+    };
+  ```
+
+expected_generation:
+  should_generate: true
+  reason: Color contrast requirements are a critical part of accessibility standards.
+  operation: create
+  file_path: .cursor/rules/accessibility-standards.mdc
+  changes:
+    - type: addition
+      content: |
+        ## Color Contrast Requirements
+        - Light text on dark backgrounds must have at least 4.5:1 contrast ratio
+        - Dark text on light backgrounds must have at least 7:1 contrast ratio
+        - Use tools like WebAIM Contrast Checker to verify ratios
+      is_new_file: true
+      file_globs: ["src/**/*.tsx", "src/**/*.jsx"]
+      file_description: "Basic accessibility requirements for UI components"

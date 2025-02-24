@@ -1,0 +1,84 @@
+name: evolving_pattern
+description: |
+  Tests handling of a pattern that's evolving from a previous rule.
+  Should recognize the relationship to existing rule and handle the transition.
+
+pr_comment: |
+  We're moving from CSS Modules to Tailwind, so components should now use
+  Tailwind classes instead of importing .module.css files. This is part of
+  our design system migration.
+
+code_context: |
+  File: src/components/Button.tsx
+  Line: 5
+
+  Diff hunk:
+  ```diff
+  - import styles from './Button.module.css';
+  -
+    export function Button({ children, variant = 'primary' }) {
+      return (
+  -     <button className={styles[variant]}>
+  +     <button className={`rounded px-4 py-2 ${
+  +       variant === 'primary' 
+  +         ? 'bg-blue-500 hover:bg-blue-600' 
+  +         : 'bg-gray-500 hover:bg-gray-600'
+  +     }`}>
+          {children}
+        </button>
+      );
+    }
+  ```
+
+  Deleted file:
+  ```css
+  /* Button.module.css */
+  .primary {
+    background: #4a90e2;
+    padding: 8px 16px;
+    border-radius: 4px;
+  }
+
+  .primary:hover {
+    background: #357abd;
+  }
+
+  .secondary {
+    background: #6b7280;
+    padding: 8px 16px;
+    border-radius: 4px;
+  }
+
+  .secondary:hover {
+    background: #4b5563;
+  }
+  ```
+
+existing_rules:
+  styling-standards.mdc: |
+    ---
+    description: CSS and styling standards
+    globs: "src/**/*.tsx, src/**/*.css"
+    ---
+    # Styling Standards
+      
+    ## CSS Modules
+    - Use CSS Modules for component styles
+    - Keep styles colocated with components
+    - Use BEM-style class naming
+    - Avoid global styles
+
+expected_analysis:
+  should_create_rule: true
+  reason: This represents a fundamental shift in styling approach that needs to be documented and enforced.
+
+expected_generation:
+  should_generate: true
+  reason: The styling standards need to be updated to reflect the migration from CSS Modules to Tailwind.
+  operation: update
+  file_path: styling-standards.mdc
+  changes:
+    - type: addition
+      content: "\n\n## Tailwind Usage\n- Use Tailwind classes for all styling\n- Follow utility-first CSS principles\n- Group related utilities with template literals\n- Extract common patterns to components\n\n## Class Organization\n- Order utilities by: layout, spacing, colors, interactivity\n- Use template literals for conditional classes\n- Extract repeated class combinations into components\n\n## Migration\n- Convert CSS Modules to Tailwind classes\n- Remove .module.css files after migration\n- Maintain visual consistency during transition"
+      existing_content_context: "# Styling Standards\n\n## CSS Modules\n- Use CSS Modules for component styles\n- Keep styles colocated with components\n- Use BEM-style class naming\n- Avoid global styles"
+      is_new_file: false

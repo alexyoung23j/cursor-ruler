@@ -1,0 +1,67 @@
+name: temporary_migration_pattern
+description: |
+  Tests handling of patterns that are only meant to be temporary
+  (like during a migration period). Should probably be rejected since
+  temporary patterns shouldn't become permanent rules.
+
+pr_comment: |
+  During the GraphQL migration, we need to maintain both REST and GraphQL endpoints.
+  Add @deprecated tags to REST endpoints as they're migrated. Migration should end within
+  the next few weeks so we won't need to keep doing this after
+
+code_context: |
+  File: src/api/users/index.ts
+  Line: 12
+
+  Diff hunk:
+  ```diff
+    class UserController {
+  +   /** @deprecated Use GraphQL endpoint: 'users' query */
+      @Get('/users')
+      async getUsers() {
+        return this.userService.findAll();
+      }
+
+  +   /** @deprecated Use GraphQL mutation: 'createUser' */
+      @Post('/users')
+      async createUser(@Body() data: CreateUserDto) {
+        return this.userService.create(data);
+      }
+    }
+  ```
+
+  Related GraphQL file:
+  ```graphql
+  # schema/users.graphql
+  type Query {
+    users: [User!]!
+  }
+
+  type Mutation {
+    createUser(input: CreateUserInput!): User!
+  }
+  ```
+
+existing_rules:
+  api-standards.mdc: |
+    ---
+    description: API development standards
+    globs: "src/api/**/*.ts"
+    ---
+    # API Standards
+
+    ## REST Guidelines
+    - Use REST for CRUD operations
+    - Document all endpoints with OpenAPI
+    - Include rate limiting headers
+
+expected_analysis:
+  should_create_rule: false
+  reason: This is a temporary migration pattern that will become obsolete once the GraphQL migration is complete.
+
+expected_generation:
+  should_generate: false
+  reason: Temporary migration patterns should be documented in migration guides or ADRs rather than becoming permanent rules.
+  operation: null
+  file_path: null
+  changes: []

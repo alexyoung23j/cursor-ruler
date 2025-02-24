@@ -1,0 +1,23 @@
+name: modify_existing_file
+description: |
+  Tests merging multiple modifications to an existing file.
+  1. First suggestion adds some error handling guidelines
+  2. Second suggestion adds logging guidelines
+  Both modify the same existing file but in different sections.
+
+existing_rules:
+  python-standards.mdc: |
+    ---
+    description: Python coding standards
+    globs: "*.py"
+    ---
+    # Python Standards
+
+    ## Code Style
+    - Use 4 spaces for indentation
+    - Maximum line length is 88 characters
+    - Follow PEP 8 guidelines
+
+    ## Documentation
+    - All functions must have docstrings
+    - Use type hints for function parameters

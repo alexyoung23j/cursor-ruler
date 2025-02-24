@@ -1,0 +1,53 @@
+name: subtle_bug_fix
+description: |
+  Tests handling of a PR comment that looks like it could be a pattern
+  but is actually just a specific bug fix. The comment suggests a "pattern"
+  but it's really just fixing a specific race condition.
+
+pr_comment: |
+  We should check if the connection is closed before trying to reconnect to prevent race conditions
+
+code_context: |
+  File: services/database.ts
+  Line: 45
+
+  Diff hunk:
+  ```diff
+    async function reconnect() {
+  +   if (connection.isClosed()) {
+        await createConnection(config)
+  +   }
+    }
+  ```
+
+  Broader file context:
+  ```typescript
+  class DatabaseService {
+    private connection: Connection;
+    private config: ConnectionConfig;
+
+    async reconnect() {
+      if (connection.isClosed()) {
+        await createConnection(config)
+      }
+    }
+
+    async query(sql: string) {
+      if (!connection) {
+        await reconnect()
+      }
+      return connection.query(sql)
+    }
+  }
+  ```
+
+expected_analysis:
+  should_create_rule: false
+  reason: While the comment suggests a general pattern about connection handling, this is actually fixing a specific race condition in this particular database service rather than establishing a broader pattern.
+
+expected_generation:
+  should_generate: false
+  reason: This is a specific fix for a race condition in the database service's connection handling, not a general pattern that needs to be enforced across the codebase.
+  operation: null
+  file_path: null
+  changes: []

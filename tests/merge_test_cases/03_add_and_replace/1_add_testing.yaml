@@ -1,0 +1,45 @@
+pr_comment: |
+  We need to add testing guidelines to our Python standards.
+  I've updated our test suite to follow these practices:
+  - Using pytest fixtures
+  - Proper test organization
+  - Mocking external services
+
+code_context: |
+  File: tests/test_user_service.py
+  Line: 15
+
+  Diff hunk:
+  ```diff
+  +@pytest.fixture
+  +def mock_db():
+  +    with patch('services.db.Session') as mock:
+  +        yield mock
+  +
+  +def test_create_user(mock_db):
+  +    # Arrange
+  +    user_data = {"name": "Test User"}
+  +    
+  +    # Act
+  +    result = create_user(user_data)
+  +    
+  +    # Assert
+  +    assert result.name == "Test User"
+  ```
+
+expected_generation:
+  should_generate: true
+  reason: Testing standards need to be documented to ensure consistent test practices.
+  operation: update
+  file_path: python-standards.mdc
+  changes:
+    - type: addition
+      content: |
+        ## Testing
+        - Use pytest as the testing framework
+        - Organize tests using fixtures for common setup
+        - Follow Arrange-Act-Assert pattern
+        - Mock external dependencies
+        - Group tests by feature or component
+        - Include both positive and negative test cases
+      existing_content_context: "- Document return values"

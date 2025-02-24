@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --card-content: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    /* VS Code Dark+ theme colors */
+    --background: 0 0% 12%; /* #1E1E1E */
+    --foreground: 0 0% 83%; /* #D4D4D4 */
+    --card: 0 0% 12%; /* #1E1E1E */
+    --card-foreground: 0 0% 83%; /* #D4D4D4 */
+    --card-content: 0 0% 15%; /* #262626 */
+    --popover: 0 0% 12%; /* #1E1E1E */
+    --popover-foreground: 0 0% 83%; /* #D4D4D4 */
+    --primary: 210 54% 59%; /* #569CD6 - VS Code keyword blue */
+    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 208 19% 37%; /* #264F78 - VS Code selection blue */
+    --secondary-foreground: 0 0% 100%; /* White */
+    --muted: 208 19% 37%; /* #264F78 - VS Code selection blue */
+    --muted-foreground: 0 0% 83%; /* #D4D4D4 */
+    --accent: 210 54% 59%; /* #569CD6 - VS Code keyword blue */
+    --accent-foreground: 0 0% 100%; /* White */
+    --destructive: 0 71% 62%; /* #F44747 - Errors color */
+    --destructive-foreground: 0 0% 100%; /* White */
+    --border: 208 19% 37%; /* #264F78 - VS Code selection blue */
+    --input: 208 19% 37%; /* #264F78 - VS Code selection blue */
+    --ring: 210 54% 59%; /* #569CD6 - VS Code keyword blue */
+    --radius: 0.3rem;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

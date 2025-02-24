@@ -1,0 +1,35 @@
+pr_comment: |
+  We need to add error handling guidelines to our Python standards.
+  I've updated several functions to follow these practices:
+  - Using custom exceptions
+  - Adding proper error messages
+  - Handling specific exceptions
+
+code_context: |
+  File: src/data_processor.py
+  Line: 45
+
+  Diff hunk:
+  ```diff
+    def process_data(data: Dict) -> Result:
+        try:
+            validate_input(data)
+  +     except ValidationError as e:
+  +         raise ProcessingError(f"Invalid input data: {str(e)}")
+        return process_validated_data(data)
+  ```
+
+expected_generation:
+  should_generate: true
+  reason: Error handling standards need to be documented.
+  operation: update
+  file_path: python-standards.mdc
+  changes:
+    - type: addition
+      content: |
+        ## Error Handling
+        - Use custom exception classes for domain-specific errors
+        - Include descriptive error messages with context
+        - Catch and handle specific exceptions, not bare except
+        - Re-raise exceptions with additional context when appropriate
+      existing_content_context: "- Use type hints for function parameters\n"

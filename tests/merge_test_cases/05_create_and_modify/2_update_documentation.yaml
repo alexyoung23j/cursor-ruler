@@ -1,0 +1,46 @@
+pr_comment: |
+  We should enhance our documentation standards to be more comprehensive.
+  I've updated several modules to include:
+  - More detailed module-level documentation
+  - Examples in docstrings
+  - Better type annotations
+
+code_context: |
+  File: src/data_processor.py
+  Line: 1
+
+  Diff hunk:
+  ```diff
+  +"""
+  +Data processing module for handling structured input data.
+  +
+  +This module provides utilities for validating, transforming, and processing
+  +structured data according to defined schemas.
+  +
+  +Example:
+  +    >>> data = {"name": "test", "value": 42}
+  +    >>> result = process_data(data)
+  +    >>> print(result.status)
+  +    'success'
+  +"""
+  ```
+
+expected_generation:
+  should_generate: true
+  reason: Documentation standards need to be more comprehensive.
+  operation: update
+  file_path: python-standards.mdc
+  changes:
+    - type: replacement
+      text_to_replace: |
+        ## Documentation
+        - All functions must have docstrings
+        - Use type hints for function parameters
+      content: |
+        ## Documentation
+        - All modules must have a module-level docstring explaining purpose and usage
+        - All functions must have docstrings following Google style
+        - Include usage examples in docstrings for public functions
+        - Use type hints for all function parameters and return values
+        - Document exceptions that may be raised
+        - Keep documentation up to date with code changes

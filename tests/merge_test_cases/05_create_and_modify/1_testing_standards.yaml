@@ -1,0 +1,52 @@
+pr_comment: |
+  We need dedicated testing standards for our Python codebase.
+  I've created a new file with testing guidelines that align with our current practices:
+  - Using pytest as our testing framework
+  - Following test naming conventions
+  - Adding proper test documentation
+
+code_context: |
+  File: tests/test_data_processor.py
+  Line: 15
+
+  Diff hunk:
+  ```diff
+  +def test_process_data_with_invalid_input():
+  +    """Test that process_data raises appropriate error for invalid input."""
+  +    with pytest.raises(ProcessingError) as exc_info:
+  +        process_data({"invalid": "data"})
+  +    assert "Invalid input data" in str(exc_info.value)
+  ```
+
+expected_generation:
+  should_generate: true
+  reason: Testing standards need to be documented in a separate file.
+  operation: create
+  file_path: testing-standards.mdc
+  changes:
+    - type: addition
+      content: |
+        # Python Testing Standards
+
+        ## Test Framework
+        - Use pytest as the primary testing framework
+        - Organize tests in classes for related functionality
+        - Use fixtures for common test setup
+
+        ## Test Structure
+        - Name test files as `test_*.py` or `*_test.py`
+        - Use descriptive test names that explain the scenario
+        - Follow the Arrange-Act-Assert pattern
+
+        ## Test Documentation
+        - Add docstrings to test functions explaining the test case
+        - Include examples of expected inputs and outputs
+        - Document any special setup or requirements
+
+        ## Test Coverage
+        - Aim for 80% or higher code coverage
+        - Test both success and failure cases
+        - Include edge cases and boundary conditions
+      is_new_file: true
+      file_globs: ["test_*.py", "*_test.py"]
+      file_description: "Testing standards and best practices for Python code"

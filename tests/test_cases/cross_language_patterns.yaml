@@ -1,0 +1,68 @@
+name: cross_language_patterns
+description: |
+  Tests handling of patterns that should apply across multiple languages
+  (like logging standards that should be consistent in both Python and JavaScript)
+
+pr_comment: |
+  All logging across the stack should include trace IDs and user context.
+  This applies to both backend and frontend logging.
+
+code_context: |
+  File: src/utils/logger.ts
+  Line: 25
+
+  Diff hunk:
+  ```diff
+    export function logError(error: Error, context?: Record<string, any>) {
+  -   console.error(error);
+  +   const traceId = getTraceId();
+  +   const userContext = getCurrentUser();
+  +   logger.error(error, {
+  +     traceId,
+  +     userId: userContext?.id,
+  +     ...context
+  +   });
+    }
+  ```
+
+  Related Python file:
+  ```python
+  # backend/utils/logger.py
+  def log_error(error: Exception, **context):
+      trace_id = get_trace_id()
+      user_context = get_current_user()
+      logger.error(error, extra={
+          'trace_id': trace_id,
+          'user_id': user_context.id if user_context else None,
+          **context
+      })
+  ```
+
+existing_rules:
+  logging-standards.mdc: |
+    ---
+    description: Basic logging guidelines
+    globs: "**/*.py"
+    ---
+    # Logging Standards
+
+    ## Core Guidelines
+    - Use appropriate log levels (debug, info, warn, error)
+    - Include relevant context with errors
+    - Don't log sensitive information
+
+expected_analysis:
+  should_create_rule: true
+  reason: This establishes a specific cross-stack logging pattern that enhances debugging and error tracking capabilities.
+
+expected_generation:
+  should_generate: true
+  reason: This pattern adds important specific requirements to our logging standards that apply across all languages.
+  operation: update
+  file_path: logging-standards.mdc
+  changes:
+    - type: addition
+      content: "\n\n## Required Context\nAll error logs must include:\n- Trace ID for request tracking\n- User context (ID, role if available)\n- Relevant business context (order ID, etc)\n\n## Implementation\n- Frontend: Use logger.error with traceId and userContext\n- Backend: Use logger.error with trace_id and user_context\n- Services: Propagate trace IDs across service boundaries"
+      existing_content_context: "- Use appropriate log levels (debug, info, warn, error)\n- Include relevant context with errors\n- Don't log sensitive information"
+      is_new_file: false
+      globs: '["**/*.py", "**/*.ts"]'

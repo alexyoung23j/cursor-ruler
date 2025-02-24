@@ -1,0 +1,70 @@
+name: accessibility_standards
+description: |
+  Tests handling of a PR comment that introduces accessibility standards.
+  This should result in creating a new rule file since accessibility is a distinct
+  concern not covered by existing rules.
+
+pr_comment: |
+  We need to ensure all our components meet WCAG 2.1 AA standards.
+  Here's what I've updated in the button component:
+  1. Added proper aria-labels
+  2. Ensured color contrast meets AA standards
+  3. Added keyboard focus states
+  4. Made sure it works with screen readers
+
+  Let's apply these standards across all interactive components.
+
+code_context: |
+  File: src/components/Button.tsx
+  Line: 12
+
+  Diff hunk:
+  ```diff
+    export function Button({ children, variant = 'primary' }) {
+      return (
+        <button
+  +       aria-label={typeof children === 'string' ? children : undefined}
+  +       className={`${styles[variant]} focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+  +       role="button"
+  +       tabIndex={0}
+        >
+          {children}
+        </button>
+      );
+    }
+  ```
+
+existing_rules:
+  python-standards.mdc: |
+    ---
+    description: Python Standards
+    globs: "*.py"
+    ---
+    # Python Standards
+
+    ## Best Practices
+    - Use good practices
+
+expected_analysis:
+  should_create_rule: true
+  reason: This establishes accessibility standards that should be consistently applied across all components.
+
+expected_generation:
+  should_generate: true
+  reason: Accessibility standards are a distinct concern that warrant their own dedicated rule file.
+  operation: create
+  file_path: accessibility-standards.mdc
+  changes:
+    - type: addition
+      content: |
+        # Accessibility Standards
+
+        All components must meet WCAG 2.1 AA standards:
+        - Add proper aria-labels
+        - Ensure color contrast meets AA standards
+        - Add keyboard focus states
+        - Make sure components work with screen readers
+      existing_content_context: null
+      is_new_file: true
+      file_globs: ["src/**/*.tsx", "src/**/*.jsx"]
+      file_description: "Accessibility requirements for UI components"

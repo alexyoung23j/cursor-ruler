@@ -1,0 +1,48 @@
+pr_comment: |
+  We should add logging standards to our Python guidelines.
+  I've updated our services to follow consistent logging:
+  - Using structured logging
+  - Proper log levels
+  - Including request IDs
+
+code_context: |
+  File: src/services/user_service.py
+  Line: 28
+
+  Diff hunk:
+  ```diff
+    def create_user(user_data: Dict) -> User:
+  +     logger.info("Creating new user", extra={"request_id": get_request_id()})
+        try:
+            user = User.create(**user_data)
+  +         logger.debug("User created successfully", extra={
+  +             "request_id": get_request_id(),
+  +             "user_id": user.id
+  +         })
+            return user
+        except Exception as e:
+  +         logger.error("Failed to create user", extra={
+  +             "request_id": get_request_id(),
+  +             "error": str(e)
+  +         })
+            raise
+  ```
+
+expected_generation:
+  should_generate: true
+  reason: Logging standards need to be documented to ensure consistent logging across the codebase.
+  operation: update
+  file_path: python-standards.mdc
+  changes:
+    - type: addition
+      content: |
+        ## Logging
+        - Use structured logging with extra context
+        - Include request_id in all log messages
+        - Use appropriate log levels:
+          - DEBUG for detailed troubleshooting
+          - INFO for normal operations
+          - WARNING for concerning but non-error situations
+          - ERROR for failures and exceptions
+        - Log at entry and exit points of major operations
+      existing_content_context: "- Use type hints for function parameters\n"

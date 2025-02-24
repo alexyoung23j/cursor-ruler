@@ -1,0 +1,80 @@
+pr_comment: |
+  Our documentation standards need to be more detailed.
+  I've updated several modules to follow these enhanced documentation practices:
+  - More structured docstrings
+  - Better type hints
+  - Module-level documentation
+
+code_context: |
+  File: src/services/user_service.py
+  Line: 1
+
+  Diff hunk:
+  ```diff
+  +"""User management service.
+  +
+  +This module handles all user-related operations including:
+  +- User creation and validation
+  +- Profile management
+  +- Authentication checks
+  +"""
+  +
+  +from typing import Optional, Dict, List
+  +
+   class UserService:
+  -    def create_user(self, data):
+  +    def create_user(
+  +        self,
+  +        data: Dict[str, Any],
+  +        *,
+  +        validate: bool = True
+  +    ) -> User:
+  +        """Create a new user in the system.
+  +        
+  +        Args:
+  +            data: Dictionary containing user data
+  +                Required keys: email, password
+  +                Optional: name, preferences
+  +            validate: Whether to validate the input data
+  +        
+  +        Returns:
+  +            User: The newly created user instance
+  +        
+  +        Raises:
+  +            ValidationError: If validate=True and data is invalid
+  +            DuplicateUserError: If user with email already exists
+  +        """
+  ```
+
+expected_generation:
+  should_generate: true
+  reason: Documentation standards need to be more comprehensive and structured.
+  operation: update
+  file_path: python-standards.mdc
+  changes:
+    - type: replacement
+      text_to_replace: |
+        ## Documentation
+        - All functions must have docstrings
+        - Use type hints for function parameters
+        - Document return values
+      content: |
+        ## Documentation
+        ### Module Documentation
+        - Every module must have a module-level docstring
+        - Include module's purpose and main functionality
+        - List key classes and functions
+        - Document any module-level constants or configuration
+
+        ### Function Documentation
+        - Use Google-style docstrings
+        - Document all parameters with types and descriptions
+        - Specify return types and descriptions
+        - List all possible exceptions
+        - Include usage examples for complex functions
+
+        ### Type Hints
+        - Use type hints for all function parameters
+        - Use typing module for complex types
+        - Document type variables and generics
+        - Use Optional[] instead of Union[Type, None]

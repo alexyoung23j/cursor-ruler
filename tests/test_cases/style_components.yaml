@@ -1,0 +1,78 @@
+name: style_components_sections
+description: |
+  Tests handling of a PR comment about component structure,
+  specifically about reserving section tags for main components.
+  Should update an existing style rule.
+
+pr_comment: "avoid using sections here, reserve those for main components"
+
+code_context: |
+  File: components/ProductCard.tsx
+  Line: 15
+
+  Diff hunk:
+  ```diff
+  - <div className="product-card">
+  + <section className="product-card">
+      <h2>{product.name}</h2>
+      <p>{product.description}</p>
+  - </div>
+  + </section>
+  ```
+
+  Broader file context:
+  ```tsx
+  import React from 'react'
+  import { Product } from '../types'
+
+  interface Props {
+    product: Product
+  }
+
+  export const ProductCard: React.FC<Props> = ({ product }) => {
+    return (
+      <section className="product-card">
+        <h2>{product.name}</h2>
+        <p>{product.description}</p>
+      </section>
+    )
+  }
+  ```
+
+existing_rules:
+  style-rules.mdc: |
+    ---
+    description: Rules for how style should be applied and component style stuff
+    globs: "*"
+    ---
+    # Style Guidelines
+
+    ## Component Structure
+    - Use semantic HTML elements appropriately
+    - Follow consistent component organization
+    - Maintain clear hierarchy in markup
+
+    ## CSS Framework
+    - Use Tailwind for styling
+    - Follow utility-first approach
+    - Avoid custom CSS when possible
+
+    ## Class Organization
+    - Keep class lists clean and readable
+    - Avoid grouping unrelated classes
+    - Use consistent class ordering
+
+expected_analysis:
+  should_create_rule: true
+  reason: This comment suggests a consistent pattern for semantic HTML usage that should be enforced across components.
+
+expected_generation:
+  should_generate: true
+  reason: "This comment represents a clear, established semantic HTML pattern about when to use section vs div elements. It's a specific, actionable guideline that will apply across multiple components and contexts."
+  operation: "update"
+  file_path: "style-rules.mdc"
+  changes:
+    - type: "addition"
+      content: "\n\n## Semantic HTML Usage\n- Reserve <section> elements for main component sections or major content divisions\n- Use <div> elements for general purpose containers and minor structural grouping\n- Avoid using <section> for basic wrapping or styling purposes where a <div> would suffice"
+      existing_content_context: "- Good structure\n- Tailwind\n- Avoid grouping classes"
+      is_new_file: false

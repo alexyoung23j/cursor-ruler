@@ -1,0 +1,43 @@
+pr_comment: |
+  We need to update our error handling guidelines to be more specific about exception types.
+  I've updated several modules to follow these practices:
+  - Using custom exceptions
+  - Proper exception hierarchies
+  - Better error messages
+
+code_context: |
+  File: src/services/data_service.py
+  Line: 25
+
+  Diff hunk:
+  ```diff
+  +class ServiceError(Exception):
+  +    """Base exception for all service-related errors."""
+  +
+  +class ValidationError(ServiceError):
+  +    """Raised when input validation fails."""
+  +
+  +class ProcessingError(ServiceError):
+  +    """Raised when data processing fails."""
+  +
+   def process_data(data: Dict) -> Result:
+       try:
+           validate_input(data)
+  -    except Exception as e:
+  -        logger.error(f"Error: {e}")
+  -        raise
+  +    except ValidationError as e:
+  +        raise ProcessingError(f"Invalid input data: {str(e)}")
+       return process_validated_data(data)
+
+expected_generation:
+  should_generate: true
+  reason: Error handling guidelines need to be more specific about exception types and hierarchies.
+  operation: update
+  file_path: python-standards.mdc
+  changes:
+    - type: replacement
+      text_to_replace: |
+        - Log errors properly
+      content: |
+        - Define custom exception classes for your domain

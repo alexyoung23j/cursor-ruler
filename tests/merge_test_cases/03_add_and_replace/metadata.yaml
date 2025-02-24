@@ -1,0 +1,24 @@
+name: add_and_replace
+description: |
+  Tests merging a combination of additions and replacements to an existing file.
+  1. First suggestion adds new testing guidelines at the end
+  2. Second suggestion replaces the documentation section with more detailed standards
+  Tests how non-overlapping additions and replacements are handled.
+
+existing_rules:
+  python-standards.mdc: |
+    ---
+    description: Python coding standards
+    globs: "*.py"
+    ---
+    # Python Standards
+
+    ## Code Style
+    - Use 4 spaces for indentation
+    - Maximum line length is 88 characters
+    - Follow PEP 8 guidelines
+
+    ## Documentation
+    - All functions must have docstrings
+    - Use type hints for function parameters
+    - Document return values

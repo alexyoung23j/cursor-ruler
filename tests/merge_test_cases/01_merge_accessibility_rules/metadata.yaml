@@ -1,0 +1,15 @@
+name: merge_accessibility_rules
+description: |
+  Tests merging multiple accessibility-related suggestions.
+  1. First suggestion creates a new accessibility standards file
+  2. Second suggestion adds color contrast requirements
+  3. Third suggestion adds keyboard navigation standards
+
+existing_rules:
+  python-standards.mdc: |
+    ---
+    description: Python Standards
+    globs: "*.py"
+    ---
+    # Python Standards
+    - use good practices

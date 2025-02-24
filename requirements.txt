@@ -1,0 +1,13 @@
+fastapi>=0.104.1
+uvicorn>=0.24.0
+python-dotenv>=1.0.0
+PyGithub>=2.1.1
+pydantic>=2.5.2
+python-jose[cryptography]>=3.3.0
+requests>=2.31.0
+PyYAML>=6.0.1
+langchain>=0.1.0
+langchain-openai>=0.0.2
+langchain-anthropic>=0.1.1
+anthropic>=0.8.0
+langchain-community>=0.0.10 

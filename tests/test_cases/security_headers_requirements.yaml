@@ -1,0 +1,92 @@
+name: security_headers_requirements
+description: |
+  Tests handling of a PR comment about security header requirements in HTTP responses.
+  Should create a new security rule while considering existing security patterns.
+
+pr_comment: |
+  All HTTP responses need these security headers:
+  - X-Content-Type-Options: nosniff
+  - Strict-Transport-Security with at least 1 year max-age
+  - X-Frame-Options: DENY unless specifically needed
+  Use our security middleware to enforce this consistently.
+
+code_context: |
+  File: api/middleware/security.py
+  Line: 25
+
+  Diff hunk:
+  ```diff
+    def add_security_headers(response):
+        response.headers.update({
+  -        'X-Frame-Options': 'SAMEORIGIN',
+  +        'X-Frame-Options': 'DENY',
+  +        'X-Content-Type-Options': 'nosniff',
+  +        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+        })
+        return response
+  ```
+
+  Broader file context:
+  ```python
+  from typing import Callable
+  from fastapi import FastAPI, Response
+  from starlette.middleware.base import BaseHTTPMiddleware
+
+  class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+      async def dispatch(self, request, call_next):
+          response = await call_next(request)
+          return add_security_headers(response)
+
+  def add_security_headers(response: Response) -> Response:
+      response.headers.update({
+          'X-Frame-Options': 'DENY',
+          'X-Content-Type-Options': 'nosniff',
+          'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+      })
+      return response
+
+  def setup_security(app: FastAPI):
+      app.add_middleware(SecurityHeadersMiddleware)
+  ```
+
+existing_rules:
+  security-basics.mdc: |
+    ---
+    description: Basic security requirements for all code
+    globs: "**/*.py, **/*.ts, **/*.js"
+    ---
+    # Security Requirements
+
+    ## Basic Security
+    - Use HTTPS for all endpoints
+    - Sanitize all user input
+    - Use prepared statements for SQL
+    - Hash passwords with strong algorithms
+
+  api-standards.mdc: |
+    ---
+    description: API development standards
+    globs: "**/api/**/*.py, **/api/**/*.ts"
+    ---
+    # API Standards
+
+    ## Endpoint Requirements
+    - Use proper HTTP methods
+    - Return appropriate status codes
+    - Include proper error responses
+    - Rate limit public endpoints
+
+expected_analysis:
+  should_create_rule: true
+  reason: This establishes specific security header requirements that should be consistently applied across all HTTP responses.
+
+expected_generation:
+  should_generate: true
+  reason: Security header requirements should be integrated into existing security basics for comprehensive coverage.
+  operation: update
+  file_path: security-basics.mdc
+  changes:
+    - type: addition
+      content: "\n\nHTTP Security Headers:\n- X-Content-Type-Options: nosniff\n- Strict-Transport-Security: max-age=31536000; includeSubDomains\n- X-Frame-Options: DENY (unless specifically required otherwise)\n- Content-Security-Policy appropriate for the endpoint\n- Use SecurityHeadersMiddleware for consistent application\n- Document any deviations from default header values"
+      existing_content_context: "Basic security requirements:\n- Use HTTPS for all endpoints\n- Sanitize all user input\n- Use prepared statements for SQL\n- Hash passwords with strong algorithms"
+      is_new_file: false

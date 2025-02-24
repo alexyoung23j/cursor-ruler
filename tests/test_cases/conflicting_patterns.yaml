@@ -1,0 +1,139 @@
+name: conflicting_patterns
+description: |
+  Tests handling of a PR comment that suggests a pattern that partially 
+  conflicts with an existing rule. Should detect the conflict and either 
+  reject or reconcile appropriately.
+
+pr_comment: |
+  For complex forms, we should use React Hook Form instead of Formik.
+  It has better performance and a smaller bundle size. Let's switch all
+  our forms to use React Hook Form going forward.
+
+code_context: |
+  File: src/features/checkout/components/PaymentForm.tsx
+  Line: 15
+
+  Diff hunk:
+  ```diff
+  - import { Formik, Form, Field } from 'formik';
+  + import { useForm } from 'react-hook-form';
+
+    export function PaymentForm() {
+  -   return (
+  -     <Formik
+  -       initialValues={{ cardNumber: '', expiry: '', cvv: '' }}
+  -       onSubmit={handleSubmit}
+  -       validationSchema={paymentSchema}
+  -     >
+  -       {({ errors, touched }) => (
+  -         <Form>
+  -           <Field name="cardNumber" />
+  -           {errors.cardNumber && touched.cardNumber && (
+  -             <div className="error">{errors.cardNumber}</div>
+  -           )}
+  -           <Field name="expiry" />
+  -           <Field name="cvv" />
+  -           <button type="submit">Pay Now</button>
+  -         </Form>
+  -       )}
+  -     </Formik>
+  +     const {
+  +       register,
+  +       handleSubmit,
+  +       formState: { errors }
+  +     } = useForm({
+  +       defaultValues: {
+  +         cardNumber: '',
+  +         expiry: '',
+  +         cvv: ''
+  +       },
+  +       resolver: zodResolver(paymentSchema)
+  +     });
+  +
+  +     return (
+  +       <form onSubmit={handleSubmit(onSubmit)}>
+  +         <input {...register('cardNumber')} />
+  +         {errors.cardNumber && (
+  +           <div className="error">{errors.cardNumber.message}</div>
+  +         )}
+  +         <input {...register('expiry')} />
+  +         <input {...register('cvv')} />
+  +         <button type="submit">Pay Now</button>
+  +       </form>
+  +     );
+    }
+  ```
+
+  Broader file context:
+  ```tsx
+  import { useForm } from 'react-hook-form';
+  import { zodResolver } from '@hookform/resolvers/zod';
+  import { paymentSchema } from '../schemas';
+
+  export function PaymentForm() {
+    const {
+      register,
+      handleSubmit,
+      formState: { errors }
+    } = useForm({
+      defaultValues: {
+        cardNumber: '',
+        expiry: '',
+        cvv: ''
+      },
+      resolver: zodResolver(paymentSchema)
+    });
+
+    return (
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <input {...register('cardNumber')} />
+        {errors.cardNumber && (
+          <div className="error">{errors.cardNumber.message}</div>
+        )}
+        <input {...register('expiry')} />
+        <input {...register('cvv')} />
+        <button type="submit">Pay Now</button>
+      </form>
+    );
+  }
+  ```
+
+existing_rules:
+  form-handling.mdc: |
+    ---
+    description: Form handling and validation standards
+    globs: "src/**/*.tsx, src/**/*.ts"
+    ---
+    # Form Handling Standards
+
+    ## Library Usage
+    - Use Formik for all form handling
+    - Implement Yup schemas for validation
+    - Use Field components for inputs
+    - Leverage Formik's built-in error handling
+
+    ## Form Organization
+    - Co-locate validation schemas with forms
+    - Use composition for complex forms
+    - Extract reusable form components
+      
+    ## Error Handling
+    - Show inline validation errors
+    - Use toast notifications for submit errors
+    - Disable submit during processing
+
+expected_analysis:
+  should_create_rule: true
+  reason: This is suggesting a valid change
+
+expected_generation:
+  should_generate: true
+  reason: This represents a clear shift in form handling standards from Formik to React Hook Form, with demonstrated implementation.
+  operation: update
+  file_path: form-handling.mdc
+  changes:
+    - type: replacement
+      content: "## Library Usage\n  - Use React Hook Form for all form handling\n  - Implement Zod schemas for validation\n  - Use register() for form inputs\n  - Leverage useForm hook for form state management"
+      text_to_replace: "## Library Usage\n  - Use Formik for all form handling\n  - Implement Yup schemas for validation\n  - Use Field components for inputs\n  - Leverage Formik's built-in error handling"
+      existing_content_context: "# Form Handling Standards\n\n"
+      is_new_file: false
