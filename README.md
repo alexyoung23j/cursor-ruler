@@ -1,6 +1,7 @@
 # Cursor Ruler
 
 Self host a Github App that uses your team's PR comments and feedback to generate and manage Cursor rules files. 3 Minutes from `git clone` to production— give it a try!
+![Screenshot 2025-02-24 at 6 25 29 PM](https://github.com/user-attachments/assets/54132465-b0bd-479e-bf56-5e8b5802cf0b)
 
 ## What Are Cursor Rules?
 
