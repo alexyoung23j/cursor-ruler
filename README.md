@@ -132,8 +132,11 @@ Now that you have your Cloud Run service running, you can set up the GitHub App:
    - Copy the base64-encoded output - you'll need this for the `GITHUB_PRIVATE_KEY_BASE64` environment variable
 
 3. **Install the App**:
+
    - Click "Install App" in the sidebar
    - Choose the repositories where you want to use the bot
+
+4. (Optional) Give the app a profile picture (it will default to the Github User who set it up if you don't)
 
 ## Configure Environment Variables
 
@@ -210,10 +213,6 @@ ngrok http --url=<your-ngrok-url> 8000
 ```
 
 Use the ngrok URL (e.g., `https://your-tunnel.ngrok-free.app`) as your GitHub App's webhook URL during local development.
-
-## License
-
-MIT
 
 ### Common Issues
 
