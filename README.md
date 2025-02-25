@@ -50,8 +50,7 @@ This workflow helps teams collaboratively develop and maintain Cursor rules whil
 git clone https://github.com/alexyoung23j/cursor-ruler.git
 cd cursor-ruler
 
-# Note: If you're cloning a private repository or have two-factor authentication enabled,
-# you may need to use a personal access token instead:
+# Note: If you have two-factor authentication enabled, you may need to use a personal access token instead:
 # git clone https://YOUR_USERNAME:YOUR_PERSONAL_ACCESS_TOKEN@github.com/alexyoung23j/cursor-ruler.git
 # You can create a personal access token at: https://github.com/settings/tokens
 ```
