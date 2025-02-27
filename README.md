@@ -41,7 +41,17 @@ Cursor Ruler streamlines the process of creating and managing Cursor rules throu
 
 This workflow helps teams collaboratively develop and maintain Cursor rules while keeping the process integrated with your normal code review workflow. By aggregating collective best practices and repository-specific instructions from PR discussions, Cursor Ruler helps build a comprehensive set of rules that improve AI assistance throughout your development process.
 
-## Google Cloud Run Deployment
+## Deployment
+
+### Google Cloud Run Deployment
+
+The instructions below are for deploying to Google Cloud Run, but since Cursor Ruler is containerized with Docker, you can deploy it to any platform that supports Docker containers. The key requirements are:
+
+1. A platform that can run the Docker container (defined in `Dockerfile`)
+2. Exposing port 8000 for the application
+3. Setting the required environment variables (GITHUB_APP_ID, GITHUB_PRIVATE_KEY_BASE64, WEBHOOK_SECRET, and an LLM API key)
+
+For other platforms like AWS, Azure, DigitalOcean, or Kubernetes, you'll follow their specific instructions for deploying Docker containers while ensuring these requirements are met.
 
 ### First-time setup:
 
