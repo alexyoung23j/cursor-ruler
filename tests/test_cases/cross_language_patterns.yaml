@@ -59,7 +59,7 @@ expected_generation:
   should_generate: true
   reason: This pattern adds important specific requirements to our logging standards that apply across all languages.
   operation: update
-  file_path: logging-standards.mdc
+  file_path: .cursor/rules/logging-standards.mdc
   changes:
     - type: addition
       content: "\n\n## Required Context\nAll error logs must include:\n- Trace ID for request tracking\n- User context (ID, role if available)\n- Relevant business context (order ID, etc)\n\n## Implementation\n- Frontend: Use logger.error with traceId and userContext\n- Backend: Use logger.error with trace_id and user_context\n- Services: Propagate trace IDs across service boundaries"

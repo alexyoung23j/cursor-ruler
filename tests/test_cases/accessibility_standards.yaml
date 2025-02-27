@@ -53,7 +53,7 @@ expected_generation:
   should_generate: true
   reason: Accessibility standards are a distinct concern that warrant their own dedicated rule file.
   operation: create
-  file_path: accessibility-standards.mdc
+  file_path: .cursor/rules/accessibility-standards.mdc
   changes:
     - type: addition
       content: |

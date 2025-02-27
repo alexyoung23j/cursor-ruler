@@ -215,6 +215,65 @@ ngrok http --url=<your-ngrok-url> 8000
 
 Use the ngrok URL (e.g., `https://your-tunnel.ngrok-free.app`) as your GitHub App's webhook URL during local development.
 
+## Testing
+
+Cursor Ruler includes a test suite to ensure the bot functions correctly. The tests are organized into several categories that validate different aspects of the application:
+
+### Running Tests
+
+All tests can be run using the `just` command runner. Here are the main testing commands:
+
+```bash
+# Run all tests
+just test
+
+# List all available test cases with their numbers
+just list-cases
+```
+
+### Test Categories
+
+The test suite covers several key areas of functionality:
+
+1. **Rule Generation Prompt Tests**: Validate that the bot correctly identifies comments that should be turned into rules and generates appropriate rule content.
+
+```bash
+# Run a specific prompt test case
+just test-prompts-case <test_case_number>
+```
+
+2. **Format Suggestion Tests**: Ensure that suggestion comments are properly formatted with the correct diff and UI elements.
+
+```bash
+# Run all format suggestion tests
+just test-format
+
+# Run a specific format suggestion test case
+just test-format-case <n>
+```
+
+3. **Merge Tests**: Verify that multiple rule suggestions can be correctly merged without conflicts.
+
+```bash
+# Run all merge tests
+just test-merges
+
+# List available merge test cases
+just list-merge-cases
+
+# Run a specific merge test case
+just test-merge-case <case_name>
+```
+
+4. **Apply Tests**: Test the functionality that applies accepted changes to the repository.
+
+```bash
+# Run a specific apply test case
+just test-apply-case <case_name>
+```
+
+Test cases are defined in YAML files in the `tests/test_cases` directory, with merge test cases in `tests/merge_test_cases`. These test definitions include sample PR comments, expected rule outputs, and other test parameters.
+
 ### Common Issues
 
 1. **Webhook 500 Internal Server Error**:

@@ -130,7 +130,7 @@ expected_generation:
   should_generate: true
   reason: This represents a clear shift in form handling standards from Formik to React Hook Form, with demonstrated implementation.
   operation: update
-  file_path: form-handling.mdc
+  file_path: .cursor/rules/form-handling.mdc
   changes:
     - type: replacement
       content: "## Library Usage\n  - Use React Hook Form for all form handling\n  - Implement Zod schemas for validation\n  - Use register() for form inputs\n  - Leverage useForm hook for form state management"

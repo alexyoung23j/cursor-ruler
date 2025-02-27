@@ -151,7 +151,7 @@ expected_generation:
   should_generate: true
   reason: These documentation standards should be added to ensure consistent API documentation.
   operation: update
-  file_path: code-documentation.mdc
+  file_path: .cursor/rules/code-documentation.mdc
   changes:
     - type: addition
       content: "\n\n## TypeDoc Requirements\nAll public APIs must include:\n- Function description\n- @param tags with descriptions\n- @returns tag with type and description\n- At least one @example with code\n- @throws tags for possible errors\n\n## Example Format\n```typescript\n/**\n * Brief description of function\n * \n * @param paramName - Parameter description\n * @returns Description of return value\n * \n * @example\n * ```ts\n * // Usage example here\n * ```\n * \n * @throws {ErrorType} Error description\n */\n```\n\n## Additional Guidelines\n- Document all public exports\n- Include type information\n- Add links to related APIs\n- Document breaking changes"
