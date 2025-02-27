@@ -262,37 +262,17 @@ async def test_prompts(test_case):
                 else:
                     # Compare each change
                     for expected, actual in zip(expected_changes, actual_changes):
-                        # For new files, verify frontmatter is present
+                        # For new files, verify required fields are present
                         if expected["is_new_file"] and actual.is_new_file:
-                            if not actual.content.startswith('---\n'):
-                                print("\nMissing frontmatter in new file content")
-                                print("Expected content to start with frontmatter (---)")
-                                print("Got:", actual.content[:50] + "...")
+                            if not actual.file_globs:
+                                print("\nMissing file_globs for new file")
+                                generation_passed = False
+                                break
+                            if not actual.file_description:
+                                print("\nMissing file_description for new file")
                                 generation_passed = False
                                 break
                             
-                            # Try to parse frontmatter
-                            try:
-                                content_parts = actual.content.split('---', 2)
-                                if len(content_parts) >= 3:
-                                    frontmatter = yaml.safe_load(content_parts[1])
-                                    if not frontmatter.get('description'):
-                                        print("\nMissing description in frontmatter")
-                                        generation_passed = False
-                                        break
-                                    if not frontmatter.get('globs'):
-                                        print("\nMissing globs in frontmatter")
-                                        generation_passed = False
-                                        break
-                                else:
-                                    print("\nInvalid frontmatter format")
-                                    generation_passed = False
-                                    break
-                            except yaml.YAMLError:
-                                print("\nFailed to parse frontmatter")
-                                generation_passed = False
-                                break
-                        
                         # For updates, check if the change maintains frontmatter
                         if expected["type"] == "replacement" and actual.type == "replacement":
                             if "---" in actual.text_to_replace and not actual.content.startswith('---\n'):

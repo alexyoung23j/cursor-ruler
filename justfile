@@ -31,7 +31,7 @@ list-cases:
     for i, path in enumerate(sorted(test_dir.glob("*.yaml"))):
         with open(path) as f:
             data = yaml.safe_load(f)
-            print(f"test_case{i} -> {data['name']} ({path.name})")
+            print(f"{i}: {data['name']} ({path.name})")
 
 # Start the backend development server with hot reloading
 start-backend:
@@ -67,9 +67,13 @@ build-frontend:
 test:
     ./venv/bin/pytest tests/tests.py -v
 
-# Run a specific test case by number
-test-case n:
-    ./venv/bin/pytest "tests/tests.py::tests[test_case{{n}}]" -v -s
+# Run a specific test case by name
+test-case name:
+    ./venv/bin/pytest "tests/tests.py::tests[test_case{{name}}]" -v -s
+
+# Run a specific test_prompts test case by name
+test-prompts-case name:
+    ./venv/bin/pytest "tests/tests.py::test_prompts[test_case{{name}}]" -v -s
 
 # Run test with debug logging
 test-debug n:

@@ -38,7 +38,7 @@ def get_llm():
     if ANTHROPIC_API_KEY:
         logger.info("Using Anthropic Claude 3.5 Sonnet")
         return ChatAnthropic(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-3-7-sonnet-20250219",
             anthropic_api_key=ANTHROPIC_API_KEY,
             temperature=0
         )

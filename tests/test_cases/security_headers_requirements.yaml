@@ -84,7 +84,7 @@ expected_generation:
   should_generate: true
   reason: Security header requirements should be integrated into existing security basics for comprehensive coverage.
   operation: update
-  file_path: security-basics.mdc
+  file_path: .cursor/rules/security-basics.mdc
   changes:
     - type: addition
       content: "\n\nHTTP Security Headers:\n- X-Content-Type-Options: nosniff\n- Strict-Transport-Security: max-age=31536000; includeSubDomains\n- X-Frame-Options: DENY (unless specifically required otherwise)\n- Content-Security-Policy appropriate for the endpoint\n- Use SecurityHeadersMiddleware for consistent application\n- Document any deviations from default header values"

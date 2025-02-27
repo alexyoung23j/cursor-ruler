@@ -1,9 +1,31 @@
 {
   "mode": {
-    "is_disabled": true,
-    "dry_run": true
+    "is_disabled": false,
+    "dry_run": false
   },
-  "repositories": {},
-  "recent_suggestions": [],
+  "repositories": {
+    "alexyoung23j/indiearchive": {
+      "full_name": "alexyoung23j/indiearchive",
+      "installation_id": 61353547,
+      "connected_at": "2025-02-27 00:55:10.032344",
+      "last_active": "2025-02-27 00:57:07.012444",
+      "enabled": true
+    }
+  },
+  "recent_suggestions": [
+    {
+      "id": "1972641258",
+      "repository": "alexyoung23j/indiearchive",
+      "pr_number": 27,
+      "file_path": ".cursor/rules/001-core-standards.mdc",
+      "timestamp": "2025-02-27 00:55:23.683432",
+      "status": "applied",
+      "suggestion_text": "**\ud83d\udca1 CURSOR RULE SUGGESTION**\n<!--thread-root-1972640658-->\n\nI suggest creating a new rules file called `.cursor/rules/001-core-standards.mdc` as follows:\n\n<!--rule-generation-output\n{\"should_generate\": true, \"reason\": \"This comment provides a clear, specific styling guideline that applies across the codebase.\", \"operation\": \"create\", \"file_path\": \".cursor/rules/001-core-standards.mdc\", \"changes\": [{\"type\": \"addition\", \"content\": \"# CSS Layout Standards\\n\\nThis repository uses specific layout approaches for consistency.\\n\\n- Always use Flexbox for layouts, never use CSS Grid\\n- Prefer Tailwind classes over inline styles when possible\\n- For component layouts, use flex-based approaches with appropriate flex properties\", \"text_to_replace\": null, \"existing_content_context\": null, \"is_new_file\": true, \"file_globs\": [\"**/*.tsx\", \"**/*.jsx\", \"**/*.css\"], \"file_description\": \"Core standards for code style and patterns\"}]}\n-->\n\n\n**Description:**\n```\nCore standards for code style and patterns\n```\n\n**Globs:**\n```\n\"**/*.tsx\", \"**/*.jsx\", \"**/*.css\"\n```\nContent:\n```diff\n+ # CSS Layout Standards\n+ \n+ This repository uses specific layout approaches for consistency.\n+ \n+ - Always use Flexbox for layouts, never use CSS Grid\n+ - Prefer Tailwind classes over inline styles when possible\n+ - For component layouts, use flex-based approaches with appropriate flex properties\n```\n\nCheck the box below to add this suggestion to the summary of suggested changes. **Clicking will NOT commit anything to the PR.**\n- [ ] Accept this suggestion?",
+      "comment_url": "https://github.com/alexyoung23j/indiearchive/pull/27#discussion_r1972641258",
+      "is_dry_run": false,
+      "dry_run_preview": null,
+      "thread_root_id": 1972640658
+    }
+  ],
   "max_suggestions_history": 5
 }

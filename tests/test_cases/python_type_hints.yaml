@@ -61,7 +61,7 @@ expected_generation:
   should_generate: true
   reason: Type hint requirements should be added to the existing Python standards file for better organization and discoverability.
   operation: update
-  file_path: python-standards.mdc
+  file_path: .cursor/rules/python-standards.mdc
   changes:
     - type: addition
       content: "\n\n## Type Hints\n- All function parameters must have type hints\n- All functions must specify return types\n- Avoid using Any unless absolutely necessary\n- For callbacks, use Callable with proper type parameters\n- For collections, use List[Type], Dict[KeyType, ValueType]\n- For optional parameters, use Optional[Type] not Type | None\n- For async functions, use Awaitable[Type] return hint\n\n### Type Aliases\n- Create aliases for complex types\n- Put shared type aliases in types.py\n- Example: JsonDict = Dict[str, Union[str, int, float, bool, None]]\n\n### Tools and Enforcement\n- Use mypy for type checking\n- Run type checks in CI\n- Configure IDE to show type hints"

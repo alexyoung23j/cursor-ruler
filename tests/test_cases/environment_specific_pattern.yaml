@@ -126,7 +126,7 @@ expected_generation:
   should_generate: true
   reason: These environment-specific patterns need to be documented to ensure consistent development practices.
   operation: update
-  file_path: api-development.mdc
+  file_path: .cursor/rules/api-development.mdc
   changes:
     - type: addition
       content: "\n\n## Environment-Specific Behavior\nDevelopment:\n- Use Mock Service Worker (MSW) for API mocking\n- Define handlers in src/api/mocks/handlers.ts\n- Mock all endpoints used in development\n\nTesting:\n- Use MSW for consistent test behavior\n- Define test-specific handlers when needed\n- Don't rely on external services in tests\n\nProduction:\n- Always use real API endpoints\n- Never include MSW in production builds\n- Use proper API URLs from environment"

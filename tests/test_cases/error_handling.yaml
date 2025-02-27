@@ -114,7 +114,7 @@ expected_generation:
   should_generate: true
   reason: These specific error handling patterns should be documented alongside the basic guidelines.
   operation: update
-  file_path: error-handling.mdc
+  file_path: .cursor/rules/error-handling.mdc
   changes:
     - type: addition
       content: "\n\n## API Error Handling\n\nAlways use the `ApiError` class for HTTP endpoints - it has the right structure\nfor frontend error handling and keeps things consistent.\n\n```python\n# ❌ Don't do this:\nexcept Exception as e:\n    logger.error(\"Failed\")\n    raise HTTPException(500, \"Internal server error\")\n\n# ✅ Do this instead:\nexcept DatabaseError as e:\n    logger.error(\"Order creation failed\",\n        extra={\"order_id\": order_id, \"error\": str(e)})\n    raise ApiError(\n        status_code=500,\n        code=\"DATABASE_ERROR\",\n        message=\"Failed to create order\"\n    )\n```\n\n### Error Codes\nUse these standard error codes:\n- `DATABASE_ERROR` - For any database-related errors\n- `VALIDATION_ERROR` - For invalid input data\n- `NOT_FOUND` - When a resource doesn't exist\n- `DUPLICATE_ERROR` - For unique constraint violations\n- `UNAUTHORIZED` - For authentication errors\n- `FORBIDDEN` - For permission errors\n\n### Logging Best Practices\n- Catch specific exceptions (DatabaseError, ValidationError, etc)\n- Log with context data that will help debugging\n- Don't log sensitive data (passwords, tokens, etc)\n- Use structured logging with the `extra` parameter"

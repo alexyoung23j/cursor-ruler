@@ -181,8 +181,6 @@ async def webhook(request: Request):
     access_token = github_integration.get_access_token(installation_id)
     github_client = Github(access_token.token)
     
-    
-    
     # Get repository info
     repo_name = data["repository"]["full_name"]
     
