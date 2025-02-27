@@ -58,7 +58,7 @@ expected_generation:
   should_generate: true
   reason: This is a company-specific pattern about package deprecation and migration that should be added to our import rules.
   operation: update
-  file_path: imports.mdc
+  file_path: .cursor/rules/imports.mdc
   changes:
     - type: addition
       content: "- Use @acme/core-components instead of @acme/components for UI components"

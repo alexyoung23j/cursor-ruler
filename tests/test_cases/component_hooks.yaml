@@ -92,7 +92,7 @@ expected_generation:
   should_generate: true
   reason: These patterns about hooks and data fetching complement the existing frontend guidelines.
   operation: update
-  file_path: frontend-guidelines.mdc
+  file_path: .cursor/rules/frontend-guidelines.mdc
   changes:
     - type: addition
       content: "\n  ## Data Fetching\n  - Keep data fetching logic in separate custom hook files\n  - Use react-query for API calls instead of useEffect\n  - Components should only consume data through hooks\n  - Data fetching hooks should be co-located with their related components"

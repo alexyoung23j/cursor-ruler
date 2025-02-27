@@ -164,7 +164,7 @@ expected_generation:
   should_generate: true
   reason: These performance patterns need to be documented to ensure consistent handling of large lists.
   operation: update
-  file_path: performance-guidelines.mdc
+  file_path: .cursor/rules/performance-guidelines.mdc
   changes:
     - type: addition
       content: "\n\n## List Virtualization\n- Use react-window for lists with >100 items\n- Implement FixedSizeList for uniform items\n- Use VariableSizeList for varying heights\n- Wrap with AutoSizer for responsive lists\n\n## Implementation\n```tsx\n<FixedSizeList\n  height={height}\n  width={width}\n  itemCount={items.length}\n  itemSize={100}\n>\n  {Row}\n</FixedSizeList>\n```\n\n## Additional Optimizations\n- Use windowing for large tables\n- Implement infinite scroll for API data\n- Cache list items with useMemo"

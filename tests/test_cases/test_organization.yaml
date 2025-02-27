@@ -73,7 +73,7 @@ expected_generation:
   should_generate: true
   reason: Test organization patterns complement existing testing guidelines and deserve their own section.
   operation: create
-  file_path: test-organization.mdc
+  file_path: .cursor/rules/test-organization.mdc
   changes:
     - type: addition
       content: "# Test Organization\n\n## Directory Structure\n- Unit tests in tests/unit/<module>/\n- Integration tests in tests/integration/<service>/\n- E2E tests in tests/e2e/\n- Performance tests in tests/performance/\n- Test files must mirror source structure\n- One test file per source file\n\n## Naming\n- Test files: test_<source_file>.py\n- Test classes: Test<ClassName>\n- Test methods: test_<method>_<scenario>\n- Use descriptive scenario names\n\n## Organization\n- Group related tests in classes\n- Split large test files\n- Use appropriate markers\n- Keep setup/teardown simple"

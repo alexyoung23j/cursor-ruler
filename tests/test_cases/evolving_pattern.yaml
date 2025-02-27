@@ -76,7 +76,7 @@ expected_generation:
   should_generate: true
   reason: The styling standards need to be updated to reflect the migration from CSS Modules to Tailwind.
   operation: update
-  file_path: styling-standards.mdc
+  file_path: .cursor/rules/styling-standards.mdc
   changes:
     - type: addition
       content: "\n\n## Tailwind Usage\n- Use Tailwind classes for all styling\n- Follow utility-first CSS principles\n- Group related utilities with template literals\n- Extract common patterns to components\n\n## Class Organization\n- Order utilities by: layout, spacing, colors, interactivity\n- Use template literals for conditional classes\n- Extract repeated class combinations into components\n\n## Migration\n- Convert CSS Modules to Tailwind classes\n- Remove .module.css files after migration\n- Maintain visual consistency during transition"

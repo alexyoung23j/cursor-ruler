@@ -70,7 +70,7 @@ expected_generation:
   should_generate: true
   reason: "This comment represents a clear, established semantic HTML pattern about when to use section vs div elements. It's a specific, actionable guideline that will apply across multiple components and contexts."
   operation: "update"
-  file_path: "style-rules.mdc"
+  file_path: ".cursor/rules/style-rules.mdc"
   changes:
     - type: "addition"
       content: "\n\n## Semantic HTML Usage\n- Reserve <section> elements for main component sections or major content divisions\n- Use <div> elements for general purpose containers and minor structural grouping\n- Avoid using <section> for basic wrapping or styling purposes where a <div> would suffice"
