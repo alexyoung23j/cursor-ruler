@@ -22,6 +22,9 @@ Cursor Ruler streamlines the process of creating and managing Cursor rules throu
 
 2. **Rule Generation**: When a relevant comment is detected, the bot uses an LLM to generate an appropriate Cursor rule and posts a suggestion as a reply to the original comment.
 
+   - Rules are currently generated according to the best practices outlined [here](https://forum.cursor.com/t/my-best-practices-for-mdc-rules-and-troubleshooting/50526)
+   - These are subject to change, and the bot will need to be updated to reflect new best practices as these emerge.
+
 3. **Review Process**: The suggestion includes a diff showing the proposed changes to existing rules or creation of new rule files.
 
 4. **Acceptance Workflow**: Team members can click an "Accept" button on suggestions they want to implement. The bot aggregates all accepted suggestions into a summary comment on the PR.
