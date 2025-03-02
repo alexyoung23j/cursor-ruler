@@ -77,10 +77,30 @@ cd cursor-ruler
 gcloud services enable \
   run.googleapis.com \
   artifactregistry.googleapis.com \
-  cloudbuild.googleapis.com
+  cloudbuild.googleapis.com \
+  storage.googleapis.com  # Added for Cloud Storage
 ```
 
-3. **Create Docker repository** (run in Google Cloud Shell):
+3. **Set up Cloud Storage for persistent state**:
+
+```bash
+# Set your Google Cloud project ID
+export PROJECT_ID=$(gcloud config get-value project)
+
+# Create a bucket for storing state
+gsutil mb -l us-east1 gs://$PROJECT_ID-cursor-ruler-state
+
+# Create a service account for accessing the bucket
+gcloud iam service-accounts create cursor-ruler-sa \
+    --display-name="Cursor Ruler Service Account"
+
+# Grant the service account access to the bucket
+gsutil iam ch \
+    serviceAccount:cursor-ruler-sa@$PROJECT_ID.iam.gserviceaccount.com:objectViewer,objectCreator \
+    gs://$PROJECT_ID-cursor-ruler-state
+```
+
+4. **Create Docker repository** (run in Google Cloud Shell):
 
 ```bash
 gcloud artifacts repositories create cursor-ruler \
@@ -88,25 +108,25 @@ gcloud artifacts repositories create cursor-ruler \
   --location=us-east1
 ```
 
-4. **Build and deploy** (run in Google Cloud Shell):
+5. **Build and deploy** (run in Google Cloud Shell):
 
 ```bash
-# Set your Google Cloud project ID
-export PROJECT_ID=$(gcloud config get-value project)
-
 # Build the container
 gcloud builds submit . --tag us-east1-docker.pkg.dev/$PROJECT_ID/cursor-ruler/app
 
-# Deploy to Cloud Run
+# Deploy to Cloud Run with storage configuration
 gcloud run deploy cursor-ruler \
   --image us-east1-docker.pkg.dev/$PROJECT_ID/cursor-ruler/app \
   --platform managed \
   --region us-east1 \
   --allow-unauthenticated \
-  --port 8000
+  --port 8000 \
+  --service-account cursor-ruler-sa@$PROJECT_ID.iam.gserviceaccount.com \
+  --set-env-vars "STORAGE_URL=gs://$PROJECT_ID-cursor-ruler-state/state.json" \
+  --min-instances=1  # Prevents cold starts and maintains state
 ```
 
-5. After deployment, you'll get a URL like `https://cursor-ruler-xxxxx.run.app` - you'll need this for the GitHub App setup. Your deployment should appear in the Cloud Run dashboard.
+6. After deployment, you'll get a URL like `https://cursor-ruler-xxxxx.run.app` - you'll need this for the GitHub App setup. Your deployment should appear in the Cloud Run dashboard.
 
 ## GitHub App Setup
 
