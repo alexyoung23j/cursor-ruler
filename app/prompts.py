@@ -95,7 +95,6 @@ Rule files should follow these naming conventions:
    - 100-199: Integration/API rules
    - 200-299: Pattern/role-specific rules
    - 300-399: Testing/QA rules
-   - 400-499: Performance/optimization rules
 4. Choose the most specific category that applies
 5. IMPORTANT: Always use the lowest available number in the appropriate range:
    - If creating the first file in a category, use the first number (e.g., 100 for Integration)

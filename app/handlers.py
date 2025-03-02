@@ -13,7 +13,7 @@ from .constants import (
 from .models import SummaryState, Suggestion
 from .formatters import format_suggestion_comment, format_summary_comment
 from .cursor_rules import CursorRule, get_current_rules, format_rules_for_llm
-from .llm import should_create_rule, generate_rule, format_rule_yaml
+from .llm import should_create_rule, generate_rule
 from github.Repository import Repository
 from functools import lru_cache
 import time
@@ -420,9 +420,7 @@ async def handle_new_suggestion(
     
     if dry_run:
         # In dry run mode, just log what would have happened
-        logger.info("DRY RUN MODE - Would have posted the following suggestion:")
-        logger.info(f"Thread root: #{thread_root_id}")
-        logger.info(f"Comment content:\n{suggestion_comment}")
+        logger.info("DRY RUN MODE - Would have posted the suggestion")
         
         # Create a suggestion record for dry run
         suggestion = RecentSuggestion(

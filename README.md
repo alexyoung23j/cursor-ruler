@@ -24,6 +24,12 @@ Cursor Ruler streamlines the process of creating and managing Cursor rules throu
 
    - Rules are currently generated according to the best practices outlined [here](https://forum.cursor.com/t/my-best-practices-for-mdc-rules-and-troubleshooting/50526)
    - These are subject to change, and the bot will need to be updated to reflect new best practices as these emerge.
+   - Rules are generated in the following general format, based on suggestions from the Cursor Community. The bot will try to follow these file naming and concept grouping guidelines:
+     - 001-099: Core/foundational rules
+     - 100-199: Integration/API rules
+     - 200-299: Pattern/role-specific rules
+     - 300-399: Testing/QA rules
+   - IMPORTANT: If you have no existing rules, the bot will always place any suggestions in a first rule file called `001-core-standards.mdc`. We recommend adding a few basic rules to your repo before enabling this bot for the first time for best possible results. Rules should be fairly small and focused.
 
 3. **Review Process**: The suggestion includes a diff showing the proposed changes to existing rules or creation of new rule files.
 
@@ -51,21 +57,16 @@ The instructions below are for deploying to Google Cloud Run, but since Cursor R
 2. Exposing port 8000 for the application
 3. Setting the required environment variables (GITHUB_APP_ID, GITHUB_PRIVATE_KEY_BASE64, WEBHOOK_SECRET, and an LLM API key)
 
-For other platforms like AWS, Azure, DigitalOcean, or Kubernetes, you'll follow their specific instructions for deploying Docker containers while ensuring these requirements are met.
+For other platforms like AWS, Azure, DigitalOcean, etc, you'll follow their specific instructions for deploying Docker containers while ensuring these requirements are met.
 
 ### First-time setup:
 
 1. **Clone the repository**:
 
 ```bash
-# Open Google Cloud Shell
-# Clone the repository
+# Open Google Cloud Shell Terminal
 git clone https://github.com/alexyoung23j/cursor-ruler.git
 cd cursor-ruler
-
-# Note: If you have two-factor authentication enabled, you may need to use a personal access token instead:
-# git clone https://YOUR_USERNAME:YOUR_PERSONAL_ACCESS_TOKEN@github.com/alexyoung23j/cursor-ruler.git
-# You can create a personal access token at: https://github.com/settings/tokens
 ```
 
 2. **Enable required APIs** (run in Google Cloud Shell):
@@ -135,11 +136,13 @@ Now that you have your Cloud Run service running, you can set up the GitHub App:
        - Issue comment
        - Pull request review comment
 
+Don't worry, the bot will never make any commits without your explicit approval!
+
 2. **Generate a Private Key**:
 
    - After creating the app, scroll down and click "Generate a private key"
    - Download the key file (it will be a .pem file)
-   - Format the key for use in environment variables:
+   - Format the key for use in environment variables (either upload the pem file to cloud console in the cursor-ruler root or download the repo locally and run the script):
      ```bash
      python scripts/format_private_key.py /path/to/your-private-key.pem
      ```
@@ -154,22 +157,20 @@ Now that you have your Cloud Run service running, you can set up the GitHub App:
 
 ## Configure Environment Variables
 
-After setting up both Cloud Run and the GitHub App, you'll need to configure these environment variables in Cloud Run. These values can be found in the settings page for the Github App:
+After setting up both Cloud Run and the GitHub App, you'll need to configure these environment variables in Cloud Run. It is easiest to do this with the Cloud Console UI, search for "Cloud Run" and you should see the cursor-ruler service.
 
 **Required Variables:**
 
-- `GITHUB_APP_ID` - Your GitHub App's ID
-- `GITHUB_PRIVATE_KEY_BASE64` - Base64-encoded version of your github app private key (.pem file)
-  - Use the included helper script to generate this:
-    ```bash
-    python scripts/format_private_key.py /path/to/your-private-key.pem
-    ```
+- `GITHUB_APP_ID` - Your GitHub App's ID (accessed from the Github App settings page)
+- `GITHUB_PRIVATE_KEY_BASE64` - Base64-encoded version of your github app private key (.pem file), generated in step 2
 - `WEBHOOK_SECRET` - The webhook secret you created during GitHub App setup (must be a secure random string)
 - **LLM API Key** (at least one of these is required):
   - `ANTHROPIC_API_KEY` - Your Anthropic API key (recommended)
   - `OPENAI_API_KEY` - Your OpenAI API key
 
 After setting these variables, visit the Cloud Run url to access the frontend. The app is now live!
+
+The app will be automatically started in "Dry Run" mode, so it will not actually make any comments or commits but will still run rule generation code and allow you to see suggestions in the frontend. Use this to verify the app is generating rules that you approve of. The Dry Run mode can be toggled on and off in the frontend.
 
 ## Updating the App
 

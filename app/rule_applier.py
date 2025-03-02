@@ -45,7 +45,7 @@ def merge_rule_changes(
             
             # Format globs as comma-separated quoted strings
             globs = latest_change.file_globs if isinstance(latest_change.file_globs, list) else [latest_change.file_globs]
-            globs_str = ", ".join(f'"{g}"' for g in globs)
+            globs_str = ", ".join(f'{g}' for g in globs)
             final_content += f"globs: {globs_str}\n"
             final_content += "---\n\n"
             

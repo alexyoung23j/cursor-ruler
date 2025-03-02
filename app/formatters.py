@@ -76,7 +76,7 @@ def format_suggestion_comment(rule: RuleGenerationOutput, thread_root_id: int, c
                 "**Globs:**",
                 "```",
                 # Format globs as comma-separated quoted strings
-                ", ".join(f'"{g}"' for g in (change.file_globs if isinstance(change.file_globs, list) else [change.file_globs])),
+                ", ".join(f'{g}' for g in (change.file_globs if isinstance(change.file_globs, list) else [change.file_globs])),
                 "```",
                 "Content:",
                 "```diff",
