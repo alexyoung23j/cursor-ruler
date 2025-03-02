@@ -54,3 +54,6 @@ htmlcov/
 
 # Ngrok
 ngrok.yml 
+
+# Server State
+data/server_state.json

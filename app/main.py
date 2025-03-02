@@ -211,6 +211,11 @@ async def webhook(request: Request):
         if event_type == "pull_request_review_comment" or event_type == "issue_comment":
             logger.info(f"Processing {event_type} on {repo_name}")
             
+            # Skip if the action is not 'created'
+            if data.get("action") != "created":
+                logger.info(f"Ignoring {event_type} with action '{data.get('action')}'")
+                return {"message": f"Ignoring {data.get('action')} action"}
+            
             # Extract PR number based on event type
             if event_type == "pull_request_review_comment":
                 pr_number = data["pull_request"]["number"]
