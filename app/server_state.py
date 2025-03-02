@@ -1,10 +1,37 @@
-from typing import List, Dict, Optional, Literal
+from typing import List, Dict, Optional, Literal, Protocol, runtime_checkable
 from pydantic import BaseModel
 import json
 import os
 import logging
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import urlparse
+import base64
+
+# Optional storage backend imports - imported on demand
+storage_backends = {
+    'gcs': False,
+    's3': False,
+    'azure': False
+}
+
+try:
+    from google.cloud import storage
+    storage_backends['gcs'] = True
+except ImportError:
+    pass
+
+try:
+    import boto3
+    storage_backends['s3'] = True
+except ImportError:
+    pass
+
+try:
+    from azure.storage.blob import BlobServiceClient
+    storage_backends['azure'] = True
+except ImportError:
+    pass
 
 logger = logging.getLogger(__name__)
 
@@ -91,33 +118,160 @@ class ServerState(BaseModel):
         repo = self.repositories.get(full_name)
         return repo is not None and repo.enabled
 
+@runtime_checkable
+class StorageBackend(Protocol):
+    """Abstract interface for storage backends"""
+    def read(self) -> Optional[str]:
+        """Read state from storage, return None if doesn't exist"""
+        ...
+    
+    def write(self, data: str) -> None:
+        """Write state to storage"""
+        ...
+
+class LocalFileStorage(StorageBackend):
+    """Local file storage implementation"""
+    def __init__(self, path: str):
+        self.path = Path(path)
+        
+    def read(self) -> Optional[str]:
+        try:
+            if self.path.exists():
+                return self.path.read_text()
+            return None
+        except Exception as e:
+            logger.error(f"Failed to read from local file: {e}")
+            return None
+            
+    def write(self, data: str) -> None:
+        try:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            self.path.write_text(data)
+        except Exception as e:
+            logger.error(f"Failed to write to local file: {e}")
+
+class GoogleCloudStorage(StorageBackend):
+    """Google Cloud Storage implementation"""
+    def __init__(self, bucket: str, path: str):
+        try:
+            self.client = storage.Client()
+            self.bucket = self.client.bucket(bucket)
+            self.blob = self.bucket.blob(path.lstrip('/'))
+        except ImportError:
+            raise ImportError("google-cloud-storage is required for GCS storage")
+            
+    def read(self) -> Optional[str]:
+        try:
+            if self.blob.exists():
+                return self.blob.download_as_text()
+            return None
+        except Exception as e:
+            logger.error(f"Failed to read from GCS: {e}")
+            return None
+            
+    def write(self, data: str) -> None:
+        try:
+            self.blob.upload_from_string(data)
+        except Exception as e:
+            logger.error(f"Failed to write to GCS: {e}")
+
+class S3Storage(StorageBackend):
+    """AWS S3 Storage implementation"""
+    def __init__(self, bucket: str, path: str):
+        try:
+            self.s3 = boto3.client('s3')
+            self.bucket = bucket
+            self.key = path.lstrip('/')
+        except ImportError:
+            raise ImportError("boto3 is required for S3 storage")
+            
+    def read(self) -> Optional[str]:
+        try:
+            response = self.s3.get_object(Bucket=self.bucket, Key=self.key)
+            return response['Body'].read().decode('utf-8')
+        except self.s3.exceptions.NoSuchKey:
+            return None
+        except Exception as e:
+            logger.error(f"Failed to read from S3: {e}")
+            return None
+            
+    def write(self, data: str) -> None:
+        try:
+            self.s3.put_object(Bucket=self.bucket, Key=self.key, Body=data.encode('utf-8'))
+        except Exception as e:
+            logger.error(f"Failed to write to S3: {e}")
+
+class AzureStorage(StorageBackend):
+    """Azure Blob Storage implementation"""
+    def __init__(self, container: str, path: str):
+        try:
+            connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+            if not connection_string:
+                raise ValueError("AZURE_STORAGE_CONNECTION_STRING environment variable is required")
+            self.service_client = BlobServiceClient.from_connection_string(connection_string)
+            self.container_client = self.service_client.get_container_client(container)
+            self.blob_client = self.container_client.get_blob_client(path.lstrip('/'))
+        except ImportError:
+            raise ImportError("azure-storage-blob is required for Azure storage")
+            
+    def read(self) -> Optional[str]:
+        try:
+            return self.blob_client.download_blob().readall().decode('utf-8')
+        except Exception as e:
+            if 'BlobNotFound' in str(e):
+                return None
+            logger.error(f"Failed to read from Azure: {e}")
+            return None
+            
+    def write(self, data: str) -> None:
+        try:
+            self.blob_client.upload_blob(data, overwrite=True)
+        except Exception as e:
+            logger.error(f"Failed to write to Azure: {e}")
+
+def get_storage_backend(url: str) -> StorageBackend:
+    """Create appropriate storage backend from URL"""
+    parsed = urlparse(url)
+    scheme = parsed.scheme
+    
+    if scheme == 'file':
+        path = parsed.netloc + parsed.path
+        return LocalFileStorage(path)
+    elif scheme == 'gs':
+        return GoogleCloudStorage(parsed.netloc, parsed.path)
+    elif scheme == 's3':
+        return S3Storage(parsed.netloc, parsed.path)
+    elif scheme == 'az':
+        return AzureStorage(parsed.netloc, parsed.path)
+    else:
+        raise ValueError(f"Unsupported storage scheme: {scheme}")
+
 class StateManager:
     """Manages the server state persistence"""
-    def __init__(self, state_file: str = "data/server_state.json"):
-        self.state_file = state_file
+    def __init__(self, storage_url: Optional[str] = None):
+        if storage_url is None:
+            storage_url = os.getenv('STORAGE_URL', 'file://data/server_state.json')
+        
+        self.storage = get_storage_backend(storage_url)
         self.state = self._load_state()
         
     def _load_state(self) -> ServerState:
-        """Load state from file or create new if doesn't exist"""
+        """Load state from storage or create new if doesn't exist"""
         try:
-            if os.path.exists(self.state_file):
-                with open(self.state_file, 'r') as f:
-                    data = json.load(f)
-                    return ServerState.model_validate(data)
+            data = self.storage.read()
+            if data:
+                return ServerState.model_validate(json.loads(data))
         except Exception as e:
-            logger.error(f"Failed to load state file: {e}")
+            logger.error(f"Failed to load state: {e}")
         return ServerState()
         
     def save_state(self) -> None:
-        """Save current state to file"""
+        """Save current state to storage"""
         try:
-            # Ensure directory exists
-            os.makedirs(os.path.dirname(self.state_file), exist_ok=True)
-            
-            with open(self.state_file, 'w') as f:
-                json.dump(self.state.model_dump(), f, indent=2, default=str)
+            data = json.dumps(self.state.model_dump(), indent=2, default=str)
+            self.storage.write(data)
         except Exception as e:
-            logger.error(f"Failed to save state file: {e}")
+            logger.error(f"Failed to save state: {e}")
             
     def get_state(self) -> ServerState:
         """Get the current server state"""
@@ -134,9 +288,9 @@ class StateManager:
 # Global state manager instance
 _state_manager: Optional[StateManager] = None
 
-def get_state_manager(state_file: str = "data/server_state.json") -> StateManager:
+def get_state_manager(storage_url: Optional[str] = None) -> StateManager:
     """Get the global state manager instance"""
     global _state_manager
     if _state_manager is None:
-        _state_manager = StateManager(state_file)
+        _state_manager = StateManager(storage_url)
     return _state_manager 
