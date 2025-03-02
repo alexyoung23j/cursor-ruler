@@ -45,7 +45,7 @@ Cursor Ruler streamlines the process of creating and managing Cursor rules throu
    - Disable the bot globally or for specific repositories
    - Enable "dry-run" mode to preview bot actions without making actual comments or commits
 
-   The frontend uses a simple file-based state management system that is not persistent and is only meant to display recent data for convenience. It provides a lightweight way to monitor and control the bot's activities without requiring a database setup.
+   The frontend uses a state management system that persists configuration and recent activity in your chosen storage backend (Cloud Storage, S3, Azure Blob Storage, or local files). This ensures your settings and bot state are preserved across deployments and container restarts.
 
 This workflow helps teams collaboratively develop and maintain Cursor rules while keeping the process integrated with your normal code review workflow. By aggregating collective best practices and repository-specific instructions from PR discussions, Cursor Ruler helps build a comprehensive set of rules that improve AI assistance throughout your development process.
 
@@ -57,7 +57,17 @@ The instructions below are for deploying to Google Cloud Run, but since Cursor R
 
 1. A platform that can run the Docker container (defined in `Dockerfile`)
 2. Exposing port 8000 for the application
-3. Setting the required environment variables (GITHUB_APP_ID, GITHUB_PRIVATE_KEY_BASE64, WEBHOOK_SECRET, and an LLM API key)
+3. Setting the required environment variables:
+   - `GITHUB_APP_ID`
+   - `GITHUB_PRIVATE_KEY_BASE64`
+   - `WEBHOOK_SECRET`
+   - An LLM API key (Anthropic or OpenAI)
+   - `STORAGE_URL` and associated storage credentials
+4. Persistent storage configuration:
+   - For Cloud Run: Follow the GCS setup instructions below
+   - For AWS: Configure S3 bucket and AWS credentials
+   - For Azure: Configure Blob Storage and connection string
+   - For persistent servers: Ensure the local file path is writable
 
 For other platforms like AWS, Azure, DigitalOcean, etc, you'll follow their specific instructions for deploying Docker containers while ensuring these requirements are met.
 
@@ -78,7 +88,7 @@ gcloud services enable \
   run.googleapis.com \
   artifactregistry.googleapis.com \
   cloudbuild.googleapis.com \
-  storage.googleapis.com  # Added for Cloud Storage
+  storage.googleapis.com
 ```
 
 3. **Set up Cloud Storage for persistent state**:
@@ -94,9 +104,9 @@ gsutil mb -l us-east1 gs://$PROJECT_ID-cursor-ruler-state
 gcloud iam service-accounts create cursor-ruler-sa \
     --display-name="Cursor Ruler Service Account"
 
-# Grant the service account access to the bucket
+# Grant the service account full object access (create, read, update, delete)
 gsutil iam ch \
-    serviceAccount:cursor-ruler-sa@$PROJECT_ID.iam.gserviceaccount.com:objectViewer,objectCreator \
+    serviceAccount:cursor-ruler-sa@$PROJECT_ID.iam.gserviceaccount.com:roles/storage.objectAdmin \
     gs://$PROJECT_ID-cursor-ruler-state
 ```
 
