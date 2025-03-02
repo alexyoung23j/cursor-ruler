@@ -43,7 +43,7 @@ Cursor Ruler streamlines the process of creating and managing Cursor rules throu
    - Disable the bot globally or for specific repositories
    - Enable "dry-run" mode to preview bot actions without making actual comments or commits
 
-   The frontend uses a simple file-based state management system that is not persistent and is only meant to display recent data for ease of use. It provides a lightweight way to monitor and control the bot's activities without requiring a complex database setup.
+   The frontend uses a simple file-based state management system that is not persistent and is only meant to display recent data for convenience. It provides a lightweight way to monitor and control the bot's activities without requiring a database setup.
 
 This workflow helps teams collaboratively develop and maintain Cursor rules while keeping the process integrated with your normal code review workflow. By aggregating collective best practices and repository-specific instructions from PR discussions, Cursor Ruler helps build a comprehensive set of rules that improve AI assistance throughout your development process.
 
@@ -193,6 +193,8 @@ gcloud run deploy cursor-ruler \
   --allow-unauthenticated \
   --port 8000
 ```
+
+Updating the app will reset the app to "Dry Run" mode (and remove all the ephemeral logs from the frontend).
 
 ## Local Development
 
