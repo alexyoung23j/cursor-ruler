@@ -4,6 +4,8 @@ Cursor Ruler is a self-hosted Github App that uses your team's PR comments and f
 
 ![Screenshot 2025-02-24 at 6 35 25 PM](https://github.com/user-attachments/assets/f7f6d41d-9c4b-49b0-a7ac-037e42a328ba)
 
+Watch a quick [demo](https://youtu.be/2RRaN0Gg-3Q).
+
 ## What Are Cursor Rules?
 
 Cursor rules are instructions that customize AI behavior in the Cursor. They function as specialized system prompts for the underlying language models, helping to control how AI responds in different contexts:
