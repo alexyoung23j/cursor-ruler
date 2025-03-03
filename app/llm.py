@@ -1,6 +1,5 @@
 from typing import Optional, List
 from langchain_anthropic import ChatAnthropic
-from langchain_community.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 import os
 import logging
@@ -19,7 +18,6 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
 
 # Environment variables for API keys
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 # Define your prompt templates
@@ -42,15 +40,8 @@ def get_llm():
             anthropic_api_key=ANTHROPIC_API_KEY,
             temperature=0
         )
-    elif OPENAI_API_KEY:
-        logger.info("Using OpenAI GPT-4o")
-        return ChatOpenAI(
-            model="gpt-4o",
-            openai_api_key=OPENAI_API_KEY,
-            temperature=0
-        )
     else:
-        raise ValueError("No LLM API keys found. Please set either OPENAI_API_KEY or ANTHROPIC_API_KEY")
+        raise ValueError("No LLM API keys found. Please set ANTHROPIC_API_KEY")
 
 # Initialize the LLM and create chains
 try:

@@ -27,9 +27,7 @@ export function SetupGuide({ setupStatus }: { setupStatus: SetupStatus }) {
             <ul className="list-disc pl-5 space-y-1">
               {missingVars.map((varName) => (
                 <li key={varName} className="text-amber-700">
-                  {varName === "LLM_API_KEY"
-                    ? "ANTHROPIC_API_KEY or OPENAI_API_KEY"
-                    : varName}
+                  {varName === "LLM_API_KEY" ? "ANTHROPIC_API_KEY" : varName}
                 </li>
               ))}
             </ul>

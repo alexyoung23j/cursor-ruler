@@ -248,14 +248,14 @@ async def webhook(request: Request):
 @app.get("/api/setup-status")
 async def get_setup_status():
     """Check if all required environment variables are set"""
-    # Check if either OpenAI or Anthropic API key is set
-    has_llm_key = bool(os.getenv("ANTHROPIC_API_KEY") or os.getenv("OPENAI_API_KEY"))
+    # Check for Anthropic API key
+    has_llm_key = bool(os.getenv("ANTHROPIC_API_KEY"))
     
     # Only check for base64 private key
     has_private_key = bool(os.getenv("GITHUB_PRIVATE_KEY_BASE64"))
     
     required_vars = {
-        "LLM_API_KEY": has_llm_key,  # Either ANTHROPIC_API_KEY or OPENAI_API_KEY
+        "ANTHROPIC_API_KEY": has_llm_key,
         "GITHUB_APP_ID": bool(APP_ID),
         "GITHUB_PRIVATE_KEY_BASE64": has_private_key,  # Only use GITHUB_PRIVATE_KEY_BASE64
         "WEBHOOK_SECRET": bool(WEBHOOK_SECRET)

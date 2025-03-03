@@ -20,7 +20,7 @@ Cursor Ruler helps teams collaboratively develop these rules by capturing best p
 
 Cursor Ruler streamlines the process of creating and managing Cursor rules through GitHub pull requests:
 
-1. **Automatic Analysis**: The bot monitors PR comments and uses either Anthropic or OpenAI (based on your provided API key) to identify comments that could potentially be used as Cursor rules.
+1. **Automatic Analysis**: The bot monitors PR comments and uses Anthropic's Claude to identify comments that could potentially be used as Cursor rules.
 
 2. **Rule Generation**: When a relevant comment is detected, the bot uses an LLM to generate an appropriate Cursor rule and posts a suggestion as a reply to the original comment.
 
@@ -61,7 +61,7 @@ The instructions below are for deploying to Google Cloud Run, but since Cursor R
    - `GITHUB_APP_ID`
    - `GITHUB_PRIVATE_KEY_BASE64`
    - `WEBHOOK_SECRET`
-   - An LLM API key (Anthropic or OpenAI)
+   - `ANTHROPIC_API_KEY`
    - `STORAGE_URL` and associated storage credentials
 4. Persistent storage configuration:
    - For Cloud Run: Follow the GCS setup instructions below
@@ -196,9 +196,7 @@ After setting up both Cloud Run and the GitHub App, you'll need to configure the
 - `GITHUB_APP_ID` - Your GitHub App's ID (accessed from the Github App settings page)
 - `GITHUB_PRIVATE_KEY_BASE64` - Base64-encoded version of your github app private key (.pem file), generated in step 2
 - `WEBHOOK_SECRET` - The webhook secret you created during GitHub App setup (must be a secure random string)
-- **LLM API Key** (at least one of these is required):
-  - `ANTHROPIC_API_KEY` - Your Anthropic API key (recommended)
-  - `OPENAI_API_KEY` - Your OpenAI API key
+- `ANTHROPIC_API_KEY` - Your Anthropic API key
 
 After setting these variables, visit the Cloud Run url to access the frontend. The app is now live!
 
@@ -338,6 +336,6 @@ Test cases are defined in YAML files in the `tests/test_cases` directory, with m
    - Do not modify the encoded string in any way
 
 3. **No Rule Suggestions Generated**:
-   - Verify that your LLM API key is valid and has not expired
+   - Verify that your Anthropic API key is valid and has not expired
    - Check the Cloud Run logs for any errors related to the LLM service
    - Ensure your GitHub App has the correct permissions and webhook events configured
