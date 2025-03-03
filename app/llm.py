@@ -34,7 +34,7 @@ generation_template = PromptTemplate(
 def get_llm():
     """Initialize and return the appropriate LLM based on available API keys"""
     if ANTHROPIC_API_KEY:
-        logger.info("Using Anthropic Claude 3.5 Sonnet")
+        logger.info("Using Anthropic Claude 3.7 Sonnet")
         return ChatAnthropic(
             model="claude-3-7-sonnet-20250219",
             anthropic_api_key=ANTHROPIC_API_KEY,
